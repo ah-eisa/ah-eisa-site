@@ -6,180 +6,313 @@
   <title>Content Manager | Ahmed Eisa — Investment Insights</title>
   <link rel="icon" href="../assets/icons/ae-logo.svg" />
   <style>
+    * { box-sizing: border-box; }
     body {
       margin: 0;
+      padding: 0;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background: #f8fafc;
+      background: #0a192f;
+      color: #e2e8f0;
     }
-    /* Token Auth Modal Overlay */
-    #tokenAuthModal {
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(10, 25, 47, 0.85);
-      backdrop-filter: blur(8px);
-      display: none;
+    /* Dedicated Standalone Login Container */
+    #customLoginWrapper {
+      display: flex;
+      min-height: 100vh;
       align-items: center;
       justify-content: center;
-      z-index: 999999;
+      padding: 20px;
+      background: radial-gradient(circle at top right, rgba(200, 164, 61, 0.15), transparent 60%), #0a192f;
     }
-    .auth-box {
-      background: #ffffff;
-      padding: 36px 32px;
-      border-radius: 16px;
+    .auth-card {
+      background: #112240;
+      border: 1px solid rgba(200, 164, 61, 0.3);
+      padding: 42px 36px;
+      border-radius: 20px;
       width: 100%;
-      max-width: 460px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      max-width: 480px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
       text-align: center;
-      border: 1px solid #e2e8f0;
     }
     .auth-logo {
-      width: 48px;
-      height: 48px;
-      margin: 0 auto 16px;
-      border-radius: 10px;
+      width: 58px;
+      height: 58px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.4);
     }
     .auth-title {
-      font-size: 20px;
+      font-size: 24px;
       font-weight: 800;
-      color: #0a2540;
-      margin: 0 0 8px;
+      color: #ffffff;
+      margin: 0 0 6px;
+      letter-spacing: -0.02em;
+    }
+    .auth-subtitle {
+      font-size: 13px;
+      color: #c8a43d;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 24px;
     }
     .auth-desc {
-      font-size: 13px;
-      color: #64748b;
-      line-height: 1.5;
-      margin: 0 0 22px;
+      font-size: 14px;
+      color: #94a3b8;
+      line-height: 1.6;
+      margin: 0 0 24px;
+      text-align: left;
+      background: rgba(10, 25, 47, 0.6);
+      padding: 14px 16px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    .form-group {
+      text-align: left;
+      margin-bottom: 18px;
+    }
+    .form-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      color: #cbd5e1;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
     }
     .auth-input {
       width: 100%;
-      padding: 12px 14px;
+      padding: 13px 16px;
       font-size: 14px;
-      border: 1px solid #cbd5e1;
-      border-radius: 8px;
-      margin-bottom: 16px;
-      box-sizing: border-box;
+      border: 1px solid #233554;
+      border-radius: 10px;
+      background: #0a192f;
+      color: #ffffff;
       outline: none;
-      font-family: monospace;
+      font-family: ui-monospace, monospace;
+      transition: all 0.2s;
     }
     .auth-input:focus {
       border-color: #c8a43d;
-      box-shadow: 0 0 0 3px rgba(200, 164, 61, 0.2);
+      box-shadow: 0 0 0 3px rgba(200, 164, 61, 0.25);
     }
-    .btn-auth {
+    .btn-submit {
       width: 100%;
-      padding: 12px;
-      background: #0a2540;
-      color: #ffffff;
+      padding: 14px;
+      background: #c8a43d;
+      color: #0a192f;
       border: none;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: 8px;
+    }
+    .btn-submit:hover {
+      background: #e3cb78;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(200, 164, 61, 0.35);
+    }
+    .auth-help-link {
+      margin-top: 24px;
+      font-size: 13px;
+      color: #64748b;
+    }
+    .auth-help-link a {
+      color: #c8a43d;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .auth-help-link a:hover {
+      text-decoration: underline;
+    }
+    #authError {
+      display: none;
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid #ef4444;
+      color: #fca5a5;
+      padding: 10px 14px;
       border-radius: 8px;
-      font-size: 14px;
+      font-size: 13px;
+      margin-bottom: 16px;
+      text-align: left;
+    }
+    /* Floating Sign Out Bar inside CMS */
+    #cmsTopNav {
+      position: fixed;
+      top: 14px;
+      right: 20px;
+      z-index: 9999999;
+      display: flex;
+      gap: 10px;
+    }
+    .btn-nav-action {
+      background: #0a192f;
+      color: #c8a43d;
+      border: 1px solid rgba(200, 164, 61, 0.4);
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 12px;
       font-weight: 700;
       cursor: pointer;
-      transition: background 0.2s;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.25);
     }
-    .btn-auth:hover {
+    .btn-nav-action:hover {
       background: #c8a43d;
-      color: #0a2540;
-    }
-    .auth-help {
-      margin-top: 18px;
-      font-size: 12px;
-      color: #94a3b8;
-    }
-    .auth-help a {
-      color: #0a2540;
-      font-weight: 600;
-      text-decoration: underline;
+      color: #0a192f;
     }
   </style>
 </head>
 <body>
 
-  <!-- Token Login Modal -->
-  <div id="tokenAuthModal">
-    <div class="auth-box">
+  <!-- Floating Nav in CMS -->
+  <div id="cmsTopNav" style="display:none;">
+    <a href="../index.html" class="btn-nav-action" style="text-decoration:none;">&larr; View Website</a>
+    <button class="btn-nav-action" onclick="logoutCMS()">Sign Out (Switch Token)</button>
+  </div>
+
+  <!-- Custom Login Box (Shown when no token) -->
+  <div id="customLoginWrapper">
+    <div class="auth-card">
       <img src="../assets/icons/ae-logo.svg" alt="AE" class="auth-logo" />
-      <h2 class="auth-title">Ahmed Eisa CMS Portal</h2>
-      <p class="auth-desc">Connect directly to your GitHub repository (<code>ah-eisa/ah-eisa-site</code>) using a Personal Access Token.</p>
-      <form id="tokenForm" onsubmit="handleTokenSubmit(event)">
-        <input type="password" id="ghToken" class="auth-input" placeholder="Paste GitHub Token (ghp_...)" required autocomplete="off" />
-        <button type="submit" class="btn-auth">Sign In &amp; Open CMS &rarr;</button>
+      <h1 class="auth-title">Ahmed Eisa</h1>
+      <div class="auth-subtitle">Investment Insights CMS</div>
+
+      <div class="auth-desc">
+        Directly backed by your GitHub repository (<code>ah-eisa/ah-eisa-site</code>). Paste your Personal Access Token below to access the publishing dashboard.
+      </div>
+
+      <div id="authError"></div>
+
+      <form id="loginForm" onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label class="form-label" for="tokenInput">GitHub Personal Access Token:</label>
+          <input type="password" id="tokenInput" class="auth-input" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" required autocomplete="off" />
+        </div>
+        <button type="submit" id="btnSubmit" class="btn-submit">Sign In to Dashboard &rarr;</button>
       </form>
-      <div class="auth-help">
-        Need a token? <a href="https://github.com/settings/tokens/new?scopes=repo&description=Ahmed+Eisa+CMS" target="_blank" rel="noopener">Generate a GitHub Token with repo access &rarr;</a>
+
+      <div class="auth-help-link">
+        Don't have a token? <br />
+        <a href="https://github.com/settings/tokens/new?scopes=repo&description=Ahmed+Eisa+CMS" target="_blank" rel="noopener">
+          &rarr; Generate token on GitHub with <code>repo</code> scope
+        </a>
       </div>
     </div>
   </div>
 
   <script>
-    // Check if user is already logged in
-    (function checkAuth() {
-      var user = localStorage.getItem('netlify-cms-user');
-      if (!user || user === 'null') {
-        window.addEventListener('DOMContentLoaded', function() {
-          var modal = document.getElementById('tokenAuthModal');
-          if (modal) modal.style.display = 'flex';
+    function logoutCMS() {
+      if (confirm('Are you sure you want to sign out of the CMS?')) {
+        localStorage.removeItem('netlify-cms-user');
+        window.location.href = window.location.pathname;
+      }
+    }
+
+    async function handleLogin(e) {
+      e.preventDefault();
+      var input = document.getElementById('tokenInput');
+      var token = input.value.trim();
+      var btn = document.getElementById('btnSubmit');
+      var errBox = document.getElementById('authError');
+
+      if (!token) return;
+
+      btn.disabled = true;
+      btn.textContent = 'Verifying with GitHub...';
+      errBox.style.display = 'none';
+
+      try {
+        // Verify token with GitHub API directly
+        var res = await fetch('https://api.github.com/repos/ah-eisa/ah-eisa-site', {
+          headers: { 'Authorization': 'token ' + token }
         });
+
+        if (!res.ok) {
+          throw new Error('GitHub returned ' + res.status + '. Ensure token is valid and has "repo" permissions.');
+        }
+
+        // Save valid token for Decap CMS
+        var userData = {
+          backendName: 'github',
+          token: token,
+          isAnonymous: false
+        };
+        localStorage.setItem('netlify-cms-user', JSON.stringify(userData));
+
+        // Reload to let Decap CMS take over
+        window.location.href = window.location.pathname;
+      } catch (err) {
+        errBox.textContent = err.message;
+        errBox.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = 'Sign In to Dashboard →';
+      }
+    }
+
+    // Auth gatekeeper
+    (function initAuth() {
+      var rawUser = localStorage.getItem('netlify-cms-user');
+      var user = null;
+      try { user = JSON.parse(rawUser); } catch(e) {}
+
+      if (user && user.token) {
+        // User is logged in! Hide login screen and show CMS
+        document.getElementById('customLoginWrapper').style.display = 'none';
+        document.getElementById('cmsTopNav').style.display = 'flex';
+        document.body.style.background = '#ffffff';
+        document.body.style.color = '#1a202c';
+
+        // Dynamically load Decap CMS script
+        var script = document.createElement('script');
+        script.src = 'https://unpkg.com/decap-cms@^3.1.2/dist/decap-cms.js';
+        script.onload = function() {
+          initPreview();
+        };
+        document.head.appendChild(script);
+      } else {
+        // Keep custom login screen visible
+        document.getElementById('customLoginWrapper').style.display = 'flex';
       }
     })();
 
-    function handleTokenSubmit(e) {
-      e.preventDefault();
-      var input = document.getElementById('ghToken');
-      var token = input.value.trim();
-      if (!token) return;
+    function initPreview() {
+      if (typeof CMS === 'undefined' || typeof createClass === 'undefined') return;
+      var ArticlePreview = createClass({
+        render: function() {
+          var entry = this.props.entry;
+          var title = entry.getIn(['data', 'title']) || 'Untitled Article';
+          var date = entry.getIn(['data', 'date']) || '';
+          var category = entry.getIn(['data', 'category']) || 'Portfolio Strategy';
+          var author = entry.getIn(['data', 'author']) || 'Ahmed Eisa';
+          var readingTime = entry.getIn(['data', 'reading_time']) || '5 min read';
+          var excerpt = entry.getIn(['data', 'excerpt']) || '';
+          var heroImage = entry.getIn(['data', 'hero_image']);
+          var body = this.props.widgetFor('body');
 
-      var userData = {
-        backendName: 'github',
-        token: token,
-        isAnonymous: false
-      };
-      localStorage.setItem('netlify-cms-user', JSON.stringify(userData));
-      document.getElementById('tokenAuthModal').style.display = 'none';
-      window.location.reload();
-    }
-  </script>
-
-  <!-- Decap CMS Core Script -->
-  <script src="https://unpkg.com/decap-cms@^3.1.2/dist/decap-cms.js"></script>
-
-  <!-- Register Custom Article Preview Component -->
-  <script>
-    var ArticlePreview = createClass({
-      render: function() {
-        var entry = this.props.entry;
-        var title = entry.getIn(['data', 'title']) || 'Untitled Article';
-        var date = entry.getIn(['data', 'date']) || '';
-        var category = entry.getIn(['data', 'category']) || 'Portfolio Strategy';
-        var author = entry.getIn(['data', 'author']) || 'Ahmed Eisa';
-        var readingTime = entry.getIn(['data', 'reading_time']) || '5 min read';
-        var excerpt = entry.getIn(['data', 'excerpt']) || '';
-        var heroImage = entry.getIn(['data', 'hero_image']);
-        var body = this.props.widgetFor('body');
-
-        return h('div', { className: 'article-preview-container', style: { padding: '24px', maxWidth: '820px', margin: '0 auto', fontFamily: 'system-ui, -apple-system, sans-serif', color: '#1a202c', lineHeight: 1.7 } },
-          h('div', { style: { display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px', fontSize: '13px' } },
-            h('span', { style: { background: '#0a192f', color: '#e3cb78', padding: '4px 10px', borderRadius: '4px', fontWeight: '600' } }, category),
-            h('span', { style: { color: '#718096' } }, date ? new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : ''),
-            h('span', { style: { color: '#a0aec0' } }, '·'),
-            h('span', { style: { color: '#718096' } }, readingTime)
-          ),
-          h('h1', { style: { fontSize: '32px', lineHeight: 1.25, color: '#0a192f', marginBottom: '16px' } }, title),
-          excerpt ? h('p', { style: { fontSize: '18px', color: '#4a5568', fontStyle: 'italic', marginBottom: '24px', borderLeft: '3px solid #e3cb78', paddingLeft: '14px' } }, excerpt) : null,
-          heroImage ? h('img', { src: this.props.getAsset(heroImage).toString(), style: { width: '100%', maxHeight: '380px', objectFit: 'cover', borderRadius: '8px', marginBottom: '28px' } }) : null,
-          h('div', { className: 'article-body', style: { fontSize: '16px', color: '#2d3748' } }, body),
-          h('div', { style: { marginTop: '40px', padding: '20px', background: '#f7fafc', borderRadius: '8px', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', gap: '16px' } },
-            h('img', { src: 'https://res.cloudinary.com/dfh3erwx1/image/upload/v1760280190/IMG_0073_vzkxvd.png', style: { width: '60px', height: '60px', borderRadius: '50%', objectFit: 'cover' } }),
-            h('div', {},
-              h('div', { style: { fontWeight: '700', color: '#0a192f' } }, author),
-              h('div', { style: { fontSize: '13px', color: '#718096' } }, 'UAE CMA-Accredited Investment Portfolio Manager · Abu Dhabi')
+          return h('div', { className: 'article-preview-container', style: { padding: '24px', maxWidth: '820px', margin: '0 auto', fontFamily: 'system-ui, -apple-system, sans-serif', color: '#1a202c', lineHeight: 1.7 } },
+            h('div', { style: { display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px', fontSize: '13px' } },
+              h('span', { style: { background: '#0a192f', color: '#e3cb78', padding: '4px 10px', borderRadius: '4px', fontWeight: '600' } }, category),
+              h('span', { style: { color: '#718096' } }, date ? new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : ''),
+              h('span', { style: { color: '#a0aec0' } }, '·'),
+              h('span', { style: { color: '#718096' } }, readingTime)
+            ),
+            h('h1', { style: { fontSize: '32px', lineHeight: 1.25, color: '#0a192f', marginBottom: '16px' } }, title),
+            excerpt ? h('p', { style: { fontSize: '18px', color: '#4a5568', fontStyle: 'italic', marginBottom: '24px', borderLeft: '3px solid #e3cb78', paddingLeft: '14px' } }, excerpt) : null,
+            heroImage ? h('img', { src: this.props.getAsset(heroImage).toString(), style: { width: '100%', maxHeight: '380px', objectFit: 'cover', borderRadius: '8px', marginBottom: '28px' } }) : null,
+            h('div', { className: 'article-body', style: { fontSize: '16px', color: '#2d3748' } }, body),
+            h('div', { style: { marginTop: '40px', padding: '20px', background: '#f7fafc', borderRadius: '8px', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', gap: '16px' } },
+              h('img', { src: 'https://res.cloudinary.com/dfh3erwx1/image/upload/v1760280190/IMG_0073_vzkxvd.png', style: { width: '60px', height: '60px', borderRadius: '50%', objectFit: 'cover' } }),
+              h('div', {},
+                h('div', { style: { fontWeight: '700', color: '#0a192f' } }, author),
+                h('div', { style: { fontSize: '13px', color: '#718096' } }, 'UAE CMA-Accredited Investment Portfolio Manager · Abu Dhabi')
+              )
             )
-          )
-        );
-      }
-    });
-
-    CMS.registerPreviewTemplate('insights', ArticlePreview);
+          );
+        }
+      });
+      CMS.registerPreviewTemplate('insights', ArticlePreview);
+    }
   </script>
 </body>
 </html>
