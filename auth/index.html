@@ -1,0 +1,108 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Authenticating CMS with GitHub...</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #0a192f;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      padding: 20px;
+      box-sizing: border-box;
+      text-align: center;
+    }
+    .box {
+      background: #112240;
+      padding: 30px;
+      border-radius: 12px;
+      max-width: 400px;
+      width: 100%;
+      border: 1px solid rgba(200,164,61,0.3);
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 12px 0;
+      border-radius: 6px;
+      border: 1px solid #233554;
+      background: #0a192f;
+      color: #fff;
+      box-sizing: border-box;
+      font-family: monospace;
+    }
+    button {
+      background: #c8a43d;
+      color: #0a192f;
+      font-weight: bold;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h3 style="margin-top:0; color:#c8a43d;">Authenticating with GitHub...</h3>
+    <div id="status">Connecting to CMS session...</div>
+    <div id="manualPrompt" style="display:none; margin-top: 16px;">
+      <p style="font-size:13px; color:#94a3b8;">Enter your GitHub Personal Access Token:</p>
+      <input type="password" id="tokenInp" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" />
+      <button onclick="submitToken()">Authorize CMS &rarr;</button>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      var token = localStorage.getItem('gh_token') || '';
+      try {
+        var u = JSON.parse(localStorage.getItem('netlify-cms-user') || '{}');
+        if (u.token) token = u.token;
+      } catch(e) {}
+
+      function sendAuth(t) {
+        if (!t) return;
+        localStorage.setItem('gh_token', t);
+        var message = 'authorization:github:success:' + JSON.stringify({ token: t, provider: 'github' });
+
+        function receiveMessage(e) {
+          window.opener.postMessage(message, e.origin);
+          setTimeout(function() { window.close(); }, 300);
+        }
+
+        window.addEventListener("message", receiveMessage, false);
+        window.opener.postMessage("authorizing:github", "*");
+
+        setTimeout(function() {
+          try {
+            window.opener.postMessage(message, "*");
+          } catch(err) {}
+          setTimeout(function() { window.close(); }, 400);
+        }, 600);
+      }
+
+      window.submitToken = function() {
+        var val = document.getElementById('tokenInp').value.trim();
+        if (val) {
+          sendAuth(val);
+        }
+      };
+
+      if (token) {
+        document.getElementById('status').textContent = 'Authorizing CMS dashboard...';
+        sendAuth(token);
+      } else {
+        document.getElementById('status').style.display = 'none';
+        document.getElementById('manualPrompt').style.display = 'block';
+      }
+    })();
+  </script>
+</body>
+</html>

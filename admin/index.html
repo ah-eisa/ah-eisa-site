@@ -14,7 +14,6 @@
       background: #0a192f;
       color: #e2e8f0;
     }
-    /* Dedicated Standalone Login Container */
     #customLoginWrapper {
       display: flex;
       min-height: 100vh;
@@ -99,7 +98,7 @@
       width: 100%;
       padding: 14px;
       background: #c8a43d;
-      color: #0a192f;
+      color: #0a2540;
       border: none;
       border-radius: 10px;
       font-size: 15px;
@@ -137,7 +136,6 @@
       margin-bottom: 16px;
       text-align: left;
     }
-    /* Floating Sign Out Bar inside CMS */
     #cmsTopNav {
       position: fixed;
       top: 14px;
@@ -205,6 +203,7 @@
     function logoutCMS() {
       if (confirm('Are you sure you want to sign out of the CMS?')) {
         localStorage.removeItem('netlify-cms-user');
+        localStorage.removeItem('gh_token');
         window.location.href = window.location.pathname;
       }
     }
@@ -223,7 +222,6 @@
       errBox.style.display = 'none';
 
       try {
-        // Verify token with GitHub API directly
         var res = await fetch('https://api.github.com/repos/ah-eisa/ah-eisa-site', {
           headers: { 'Authorization': 'token ' + token }
         });
@@ -232,7 +230,8 @@
           throw new Error('GitHub returned ' + res.status + '. Ensure token is valid and has "repo" permissions.');
         }
 
-        // Save valid token for Decap CMS
+        // Save token in both places
+        localStorage.setItem('gh_token', token);
         var userData = {
           backendName: 'github',
           token: token,
@@ -240,7 +239,6 @@
         };
         localStorage.setItem('netlify-cms-user', JSON.stringify(userData));
 
-        // Reload to let Decap CMS take over
         window.location.href = window.location.pathname;
       } catch (err) {
         errBox.textContent = err.message;
@@ -252,12 +250,16 @@
 
     // Auth gatekeeper
     (function initAuth() {
-      var rawUser = localStorage.getItem('netlify-cms-user');
-      var user = null;
-      try { user = JSON.parse(rawUser); } catch(e) {}
+      var token = localStorage.getItem('gh_token');
+      if (!token) {
+        try {
+          var u = JSON.parse(localStorage.getItem('netlify-cms-user') || '{}');
+          if (u.token) token = u.token;
+        } catch(e) {}
+      }
 
-      if (user && user.token) {
-        // User is logged in! Hide login screen and show CMS
+      if (token) {
+        // User is logged in! Hide custom login screen and show CMS
         document.getElementById('customLoginWrapper').style.display = 'none';
         document.getElementById('cmsTopNav').style.display = 'flex';
         document.body.style.background = '#ffffff';
@@ -271,7 +273,6 @@
         };
         document.head.appendChild(script);
       } else {
-        // Keep custom login screen visible
         document.getElementById('customLoginWrapper').style.display = 'flex';
       }
     })();

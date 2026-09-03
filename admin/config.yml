@@ -2,6 +2,8 @@
   name: github
   repo: ah-eisa/ah-eisa-site
   branch: main
+  base_url: https://ah-eisa.com
+  auth_endpoint: auth
   open_authoring: false
 
 local_backend: true
