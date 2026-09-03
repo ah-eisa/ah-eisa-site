@@ -206,8 +206,8 @@ def generate_article_page(article, all_articles):
   </script>
 
   <link rel="icon" href="/assets/icons/ae-logo.svg">
-  <link rel="stylesheet" href="/style.css">
-  <script src="/main.js" defer></script>
+  <link rel="stylesheet" href="/style.css?v=20260903">
+  <script src="/main.js?v=20260903" defer></script>
 </head>
 <body class="article-page">
 <header id="site-header"></header>
@@ -408,8 +408,8 @@ def generate_insights_index(articles):
   <meta property="og:image" content="{AUTHOR_IMG}">
   <meta property="og:url" content="{SITE_URL}/insights.html">
   <link rel="icon" href="/assets/icons/ae-logo.svg">
-  <link rel="stylesheet" href="/style.css">
-  <script src="/main.js" defer></script>
+  <link rel="stylesheet" href="/style.css?v=20260903">
+  <script src="/main.js?v=20260903" defer></script>
 </head>
 <body class="insights-index-page">
 <header id="site-header"></header>

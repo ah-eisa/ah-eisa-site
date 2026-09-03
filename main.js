@@ -1,4 +1,4 @@
-﻿const OG_IMAGE = 'https://res.cloudinary.com/dfh3erwx1/image/upload/v1760280190/IMG_0073_vzkxvd.png';
+const OG_IMAGE = 'https://res.cloudinary.com/dfh3erwx1/image/upload/v1760280190/IMG_0073_vzkxvd.png';
 
 const HEADER_HTML = `
   <div class="header-inner">
