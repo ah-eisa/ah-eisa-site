@@ -129,7 +129,7 @@ def generate_article_page(article, all_articles):
         cards = []
         for r in related:
             cards.append(f"""
-            <a class="related-card" href="../insights/{r['slug']}.html">
+            <a class="related-card" href="/insights/{r['slug']}.html">
               <span class="category-pill">{r['category']}</span>
               <h4>{r['title']}</h4>
               <p>{r['excerpt'][:110]}...</p>
@@ -205,9 +205,9 @@ def generate_article_page(article, all_articles):
   }}
   </script>
 
-  <link rel="icon" href="../assets/icons/ae-logo.svg">
-  <link rel="stylesheet" href="../style.css">
-  <script src="../main.js" defer></script>
+  <link rel="icon" href="/assets/icons/ae-logo.svg">
+  <link rel="stylesheet" href="/style.css">
+  <script src="/main.js" defer></script>
 </head>
 <body class="article-page">
 <header id="site-header"></header>
@@ -217,8 +217,8 @@ def generate_article_page(article, all_articles):
   <!-- Breadcrumbs & Meta -->
   <div class="article-header">
     <nav class="breadcrumbs" aria-label="Breadcrumb">
-      <a href="../index.html">Home</a> &rsaquo;
-      <a href="../insights.html">Insights</a> &rsaquo;
+      <a href="/index.html">Home</a> &rsaquo;
+      <a href="/insights.html">Insights</a> &rsaquo;
       <span>{article['category']}</span>
     </nav>
     <div class="article-meta-row">
@@ -267,7 +267,7 @@ def generate_article_page(article, all_articles):
       <p class="author-bio">{AUTHOR_BIO}</p>
       <div class="author-links">
         <a href="{AUTHOR_LINKEDIN}" target="_blank" rel="noopener noreferrer" class="btn btn-outline btn-sm">Connect on LinkedIn</a>
-        <a href="../assets/pdf/Ahmed_Eisa_Investment_CV.pdf" target="_blank" rel="noopener" class="btn btn-outline btn-sm">Download Investment CV</a>
+        <a href="/assets/pdf/Ahmed_Eisa_Investment_CV.pdf" target="_blank" rel="noopener" class="btn btn-outline btn-sm">Download Investment CV</a>
       </div>
     </div>
   </section>
@@ -275,7 +275,7 @@ def generate_article_page(article, all_articles):
   {related_html}
 
   <div class="back-to-insights">
-    <a href="../insights.html" class="btn btn-outline">&larr; Back to All Investment Insights</a>
+    <a href="/insights.html" class="btn btn-outline">&larr; Back to All Investment Insights</a>
   </div>
 
 </main>
