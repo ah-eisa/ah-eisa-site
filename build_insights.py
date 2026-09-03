@@ -564,7 +564,7 @@ def update_homepage(latest_articles):
     if 'class="section insights-home-section"' in content:
         # Replace existing section
         content = re.sub(
-            r'<!-- LATEST INVESTMENT INSIGHTS -->.*?</section>\s*</div>\s*<div class="cta-row">.*?</div>\s*</section>',
+            r'<!-- LATEST INVESTMENT INSIGHTS -->.*?</section>',
             section_html.strip(),
             content,
             flags=re.DOTALL
