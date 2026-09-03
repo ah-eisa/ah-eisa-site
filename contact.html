@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Contact | Ahmed Eisa</title>
+  <meta name="description" content="Contact Ahmed Eisa for investment portfolio, wealth management, investment products, digital wealth and investment strategy opportunities in the UAE and GCC.">
+  <link rel="icon" href="assets/icons/ae-logo.svg"><link rel="stylesheet" href="style.css"><script src="main.js" defer></script>
+</head>
+<body><header id="site-header"></header>
+<main class="container narrow">
+  <div class="page-header"><div class="page-kicker">Contact</div><h1>Discuss an investment opportunity</h1><p class="lede">Open to the right investment-led role where portfolio, wealth-management and investment-product experience can be combined with digital and execution capabilities.</p></div>
+
+  <div class="contact-intro"><h2>Priority opportunity areas</h2><div class="open-for"><span class="open-for-pill">Portfolio Management</span><span class="open-for-pill">Investment Products</span><span class="open-for-pill">Wealth Management Strategy</span><span class="open-for-pill">Investment Solutions</span><span class="open-for-pill">Digital Wealth</span><span class="open-for-pill">Digital Assets / Tokenization</span><span class="open-for-pill">Investment Advisory Leadership</span></div><div class="contact-direct"><a href="mailto:Ahmed.eisa.2009@gmail.com">Ahmed.eisa.2009@gmail.com</a><a href="https://linkedin.com/in/ahmedeisa85" target="_blank" rel="noopener">LinkedIn Profile</a><a href="tel:+971501061266">+971 50 106 1266</a></div></div>
+
+  <form name="contact" method="POST" data-netlify="true" id="contact-form" class="contact-form">
+    <input type="hidden" name="form-name" value="contact">
+    <div class="row"><label for="name">Name</label><input id="name" name="name" type="text" placeholder="Your full name" required></div>
+    <div class="row"><label for="email">Email</label><input id="email" name="email" type="email" placeholder="your@email.com" required></div>
+    <div class="row"><label for="subject">Subject</label><input id="subject" name="subject" type="text" placeholder="e.g. Head of Investment Products role · Portfolio leadership discussion" required></div>
+    <div class="row"><label for="message">Message</label><textarea id="message" name="message" rows="6" placeholder="Tell me about the role or investment-related collaboration..." required></textarea></div>
+    <button class="btn btn-primary" type="submit" style="width:100%">Start the Conversation</button>
+  </form>
+  <div id="thank-you" class="thank-you hidden"><h2>Message received.</h2><p class="muted">Thank you. I will be in touch.</p><a href="index.html" class="btn btn-primary">Back to Home</a></div>
+</main><footer id="site-footer"></footer>
+<script>document.querySelector('form')?.addEventListener('submit',function(e){e.preventDefault();fetch('/',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams(new FormData(e.target)).toString()}).then(()=>{e.target.classList.add('hidden');document.getElementById('thank-you').classList.remove('hidden')}).catch(()=>alert('Unable to submit the form. Please email directly.'))});</script>
+</body></html>

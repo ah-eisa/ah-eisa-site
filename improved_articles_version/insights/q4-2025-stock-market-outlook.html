@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Q4 2025 Stock Market Outlook: No Margin for Error | Ahmed Eisa</title>
+  <meta name="description" content="An analysis of the Q4 2025 stock market outlook, focusing on opportunities and risks in a premium market.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../style.css">
+  <script src="../main.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <style>
+    .post-content {
+      margin-top: 20px;
+      line-height: 1.6;
+    }
+    .post-content h1, .post-content h2, .post-content h3 {
+      margin-top: 1.5em;
+      margin-bottom: 0.8em;
+    }
+    .post-content p {
+      margin-bottom: 1em;
+    }
+    .post-content ul {
+      list-style-type: disc;
+      margin-left: 20px;
+      margin-bottom: 1em;
+    }
+    .post-content strong {
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+<header id="site-header"></header>
+
+<main class="container narrow">
+
+  <div class="page-header">
+    <div class="section-eyebrow">Views & Commentary</div>
+    <h1>Q4 2025 Stock Market Outlook: No Margin for Error</h1>
+    <div class="post-meta">October 6, 2025 · Market Outlook, Portfolio Management</div>
+    <span class="post-source">Morningstar Summary</span>
+  </div>
+
+  <div class="post-content" id="post-content">
+    <!-- Markdown content will be loaded here -->
+  </div>
+
+</main>
+
+<footer id="site-footer"></footer>
+
+<script>
+  document.addEventListener("DOMContentLoaded", async () => {
+    const postContentDiv = document.getElementById("post-content");
+    try {
+      const response = await fetch("q4-2025-stock-market-outlook.md");
+      const markdown = await response.text();
+      postContentDiv.innerHTML = marked.parse(markdown);
+    } catch (error) {
+      console.error("Failed to load Markdown content:", error);
+      postContentDiv.innerHTML = "<p>Error loading article content.</p>";
+    }
+  });
+</script>
+
+</body>
+</html>

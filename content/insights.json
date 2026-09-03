@@ -1,0 +1,79 @@
+[
+  {
+    "slug": "q4-2025-stock-market-outlook",
+    "title": "Q4 2025 Stock Market Outlook: No Margin for Error",
+    "date": "2025-10-06",
+    "formatted_date": "October 06, 2025",
+    "category": "Markets & Macro",
+    "tags": [
+      "Market Outlook",
+      "Valuations",
+      "AI Mega-Caps",
+      "Small-Cap Value",
+      "Portfolio Strategy"
+    ],
+    "author": "Ahmed Eisa",
+    "hero_image": "https://res.cloudinary.com/dfh3erwx1/image/upload/v1760280190/IMG_0073_vzkxvd.png",
+    "excerpt": "A valuation and positioning summary focused on mega-cap concentration risk, small-cap opportunities, and the delicate balance between growth leadership and broader market breadth.",
+    "reading_time": "6 min read",
+    "url": "insights/q4-2025-stock-market-outlook.html"
+  },
+  {
+    "slug": "sca-readiness-in-practice",
+    "title": "Licence-to-Launch: SCA Readiness in Practice",
+    "date": "2025-10-01",
+    "formatted_date": "October 01, 2025",
+    "category": "Digital Assets",
+    "tags": [
+      "SCA",
+      "VARA",
+      "Regulatory Strategy",
+      "Digital Wealth",
+      "UAE Fintech"
+    ],
+    "author": "Ahmed Eisa",
+    "hero_image": "https://res.cloudinary.com/dfh3erwx1/image/upload/v1760280190/IMG_0073_vzkxvd.png",
+    "excerpt": "A practical roadmap from concept to regulatory go-live under the UAE SCA framework, connecting governance design and compliance documentation with real operating controls.",
+    "reading_time": "5 min read",
+    "url": "insights/sca-readiness-in-practice.html"
+  },
+  {
+    "slug": "5-common-portfolio-mistakes",
+    "title": "5 Common Portfolio Mistakes \u2014 And How to Fix Them",
+    "date": "2025-09-15",
+    "formatted_date": "September 15, 2025",
+    "category": "Portfolio Strategy",
+    "tags": [
+      "Portfolio Construction",
+      "Asset Allocation",
+      "Diversification",
+      "Risk Management",
+      "Tax Efficiency"
+    ],
+    "author": "Ahmed Eisa",
+    "hero_image": "https://res.cloudinary.com/dfh3erwx1/image/upload/v1760280190/IMG_0073_vzkxvd.png",
+    "excerpt": "Structural portfolio pitfalls including account sprawl, overlapping fund holdings, stale allocations, and inefficient asset placement \u2014 with actionable fixes.",
+    "reading_time": "7 min read",
+    "url": "insights/5-common-portfolio-mistakes.html"
+  },
+  {
+    "slug": "etf-flows-2025",
+    "title": "ETF Flows 2025: Where Smart Money Moved",
+    "date": "2025-08-20",
+    "formatted_date": "August 20, 2025",
+    "category": "Asset Allocation",
+    "tags": [
+      "ETFs",
+      "Capital Flows",
+      "Gold",
+      "Active Strategies",
+      "Fixed Income",
+      "Wealth Management"
+    ],
+    "author": "Ahmed Eisa",
+    "hero_image": "https://res.cloudinary.com/dfh3erwx1/image/upload/v1760280190/IMG_0073_vzkxvd.png",
+    "excerpt": "Analysis of global ETF flows across gold, value, fixed income, and active strategies ? and what shifting institutional capital signals for portfolio allocation.",
+    "reading_time": "5 min read",
+    "url": "insights/etf-flows-2025.html"
+  }
+]

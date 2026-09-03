@@ -1,0 +1,52 @@
+﻿backend:
+  name: github
+  repo: ah-eisa/ah-eisa-site
+  branch: main
+  open_authoring: false
+
+local_backend: true
+
+media_folder: "assets/images/insights"
+public_folder: "/assets/images/insights"
+
+site_url: "https://ah-eisa.com"
+display_url: "https://ah-eisa.com"
+logo_url: "https://ah-eisa.com/assets/icons/ae-logo.svg"
+
+collections:
+  - name: "insights"
+    label: "Investment Insights"
+    label_singular: "Article"
+    folder: "content/insights"
+    create: true
+    slug: "{{slug}}"
+    extension: "md"
+    format: "frontmatter"
+    editor:
+      preview: true
+    summary: "{{title}} ({{category}} — {{date}})"
+    sortable_fields: ["date", "title", "category"]
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "URL Slug", name: "slug", widget: "string", hint: "SEO-friendly permalink, e.g. tokenization-and-rwa-growth" }
+      - { label: "Excerpt / Summary", name: "excerpt", widget: "text", hint: "Short summary displayed on cards and Open Graph preview for LinkedIn" }
+      - { label: "Hero Image", name: "hero_image", widget: "image", required: false, default: "https://res.cloudinary.com/dfh3erwx1/image/upload/v1760280190/IMG_0073_vzkxvd.png" }
+      - label: "Investment Category"
+        name: "category"
+        widget: "select"
+        options:
+          - "Portfolio Strategy"
+          - "Wealth Management"
+          - "Asset Allocation"
+          - "Digital Assets"
+          - "Tokenization & RWA"
+          - "Islamic Finance"
+          - "Markets & Macro"
+          - "Investment Technology"
+      - { label: "Tags", name: "tags", widget: "list", default: ["Wealth Management", "Portfolio Strategy"] }
+      - { label: "Author", name: "author", widget: "string", default: "Ahmed Eisa" }
+      - { label: "Publish Date", name: "date", widget: "datetime", date_format: "YYYY-MM-DD", time_format: false, format: "YYYY-MM-DD" }
+      - { label: "Reading Time", name: "reading_time", widget: "string", default: "5 min read", required: false }
+      - { label: "SEO Title", name: "seo_title", widget: "string", required: false, hint: "Custom title tag for Google and search engines" }
+      - { label: "Meta Description", name: "meta_description", widget: "text", required: false, hint: "Snippet for search engine results (150-160 chars)" }
+      - { label: "Article Content", name: "body", widget: "markdown" }

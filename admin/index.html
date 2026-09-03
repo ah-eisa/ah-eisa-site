@@ -1,0 +1,59 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Content Manager | Ahmed Eisa — Investment Insights</title>
+  <link rel="icon" href="../assets/icons/ae-logo.svg" />
+  <style>
+    /* Custom admin header styling */
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
+  </style>
+</head>
+<body>
+  <!-- Decap CMS Core Script -->
+  <script src="https://unpkg.com/decap-cms@^3.1.2/dist/decap-cms.js"></script>
+
+  <!-- Register Custom Article Preview Component -->
+  <script>
+    var ArticlePreview = createClass({
+      render: function() {
+        var entry = this.props.entry;
+        var title = entry.getIn(['data', 'title']) || 'Untitled Article';
+        var date = entry.getIn(['data', 'date']) || '';
+        var category = entry.getIn(['data', 'category']) || 'Portfolio Strategy';
+        var author = entry.getIn(['data', 'author']) || 'Ahmed Eisa';
+        var readingTime = entry.getIn(['data', 'reading_time']) || '5 min read';
+        var excerpt = entry.getIn(['data', 'excerpt']) || '';
+        var heroImage = entry.getIn(['data', 'hero_image']);
+        var body = this.props.widgetFor('body');
+
+        return h('div', { className: 'article-preview-container', style: { padding: '24px', maxWidth: '820px', margin: '0 auto', fontFamily: 'system-ui, -apple-system, sans-serif', color: '#1a202c', lineHeight: 1.7 } },
+          h('div', { style: { display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px', fontSize: '13px' } },
+            h('span', { style: { background: '#0a192f', color: '#e3cb78', padding: '4px 10px', borderRadius: '4px', fontWeight: '600' } }, category),
+            h('span', { style: { color: '#718096' } }, date ? new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : ''),
+            h('span', { style: { color: '#a0aec0' } }, '·'),
+            h('span', { style: { color: '#718096' } }, readingTime)
+          ),
+          h('h1', { style: { fontSize: '32px', lineHeight: 1.25, color: '#0a192f', marginBottom: '16px' } }, title),
+          excerpt ? h('p', { style: { fontSize: '18px', color: '#4a5568', fontStyle: 'italic', marginBottom: '24px', borderLeft: '3px solid #e3cb78', paddingLeft: '14px' } }, excerpt) : null,
+          heroImage ? h('img', { src: this.props.getAsset(heroImage).toString(), style: { width: '100%', maxHeight: '380px', objectFit: 'cover', borderRadius: '8px', marginBottom: '28px' } }) : null,
+          h('div', { className: 'article-body', style: { fontSize: '16px', color: '#2d3748' } }, body),
+          h('div', { style: { marginTop: '40px', padding: '20px', background: '#f7fafc', borderRadius: '8px', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', gap: '16px' } },
+            h('img', { src: 'https://res.cloudinary.com/dfh3erwx1/image/upload/v1760280190/IMG_0073_vzkxvd.png', style: { width: '60px', height: '60px', borderRadius: '50%', objectFit: 'cover' } }),
+            h('div', {},
+              h('div', { style: { fontWeight: '700', color: '#0a192f' } }, author),
+              h('div', { style: { fontSize: '13px', color: '#718096' } }, 'UAE CMA-Accredited Investment Portfolio Manager · Abu Dhabi')
+            )
+          )
+        );
+      }
+    });
+
+    CMS.registerPreviewTemplate('insights', ArticlePreview);
+  </script>
+</body>
+</html>
