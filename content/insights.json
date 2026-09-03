@@ -7,6 +7,7 @@
     "category": "Tokenization & RWA",
     "tags": [
       "Tokenization",
+      "RWA Infrastructure",
       "RWA",
       "Digital Assets",
       "Investment Infrastructure",
@@ -17,6 +18,25 @@
     "excerpt": "How tokenization is reshaping ownership, settlement, liquidity and investor access across traditional financial markets.",
     "reading_time": "8 min read",
     "url": "insights/tokenization-real-world-assets.html"
+  },
+  {
+    "slug": "digital-sukuk-and-sovereign-debt-tokenization-in-the-gcc",
+    "title": "Digital Sukuk and Sovereign Debt Tokenization in the GCC",
+    "date": "2026-09-03",
+    "formatted_date": "September 03, 2026",
+    "category": "Islamic Finance",
+    "tags": [
+      "Sukuk",
+      "Islamic Finance",
+      "Tokenization",
+      "GCC",
+      "Fixed Income"
+    ],
+    "author": "Ahmed Eisa",
+    "hero_image": "https://res.cloudinary.com/dfh3erwx1/image/upload/v1760280190/IMG_0073_vzkxvd.png",
+    "excerpt": "How regional capital markets and sovereign issuers across the GCC are leveraging programmable DLT infrastructure to issue Sharia-compliant digital sukuk with lower issuance costs and wider global distribution.",
+    "reading_time": "1 min read",
+    "url": "insights/digital-sukuk-and-sovereign-debt-tokenization-in-the-gcc.html"
   },
   {
     "slug": "q4-2025-stock-market-outlook",
