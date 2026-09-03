@@ -4,7 +4,7 @@
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
   <title>Contact | Ahmed Eisa</title>
   <meta name="description" content="Contact Ahmed Eisa for investment portfolio, wealth management, investment products, digital wealth and investment strategy opportunities in the UAE and GCC.">
-  <link rel="icon" href="assets/icons/ae-logo.svg"><link rel="stylesheet" href="style.css"><script src="main.js" defer></script>
+  <link rel="icon" href="/assets/icons/ae-logo.svg"><link rel="stylesheet" href="/style.css"><script src="/main.js" defer></script>
 </head>
 <body><header id="site-header"></header>
 <main class="container narrow">
@@ -20,7 +20,7 @@
     <div class="row"><label for="message">Message</label><textarea id="message" name="message" rows="6" placeholder="Tell me about the role or investment-related collaboration..." required></textarea></div>
     <button class="btn btn-primary" type="submit" style="width:100%">Start the Conversation</button>
   </form>
-  <div id="thank-you" class="thank-you hidden"><h2>Message received.</h2><p class="muted">Thank you. I will be in touch.</p><a href="index.html" class="btn btn-primary">Back to Home</a></div>
+  <div id="thank-you" class="thank-you hidden"><h2>Message received.</h2><p class="muted">Thank you. I will be in touch.</p><a href="/index.html" class="btn btn-primary">Back to Home</a></div>
 </main><footer id="site-footer"></footer>
 <script>document.querySelector('form')?.addEventListener('submit',function(e){e.preventDefault();fetch('/',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams(new FormData(e.target)).toString()}).then(()=>{e.target.classList.add('hidden');document.getElementById('thank-you').classList.remove('hidden')}).catch(()=>alert('Unable to submit the form. Please email directly.'))});</script>
 </body></html>

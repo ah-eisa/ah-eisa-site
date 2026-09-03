@@ -368,10 +368,10 @@ def generate_insights_index(articles):
             <span class="meta-dot">&middot;</span>
             <span class="reading-time">{a['reading_time']}</span>
           </div>
-          <h2 class="post-card-title"><a href="insights/{a['slug']}.html">{a['title']}</a></h2>
+          <h2 class="post-card-title"><a href="/insights/{a['slug']}.html">{a['title']}</a></h2>
           <p class="post-card-excerpt">{a['excerpt']}</p>
           <div class="post-card-footer">
-            <a href="insights/{a['slug']}.html" class="read-link">Read analysis &rarr;</a>
+            <a href="/insights/{a['slug']}.html" class="read-link">Read analysis &rarr;</a>
           </div>
         </article>""")
 
@@ -388,9 +388,9 @@ def generate_insights_index(articles):
               <span>&middot;</span>
               <span>{featured['reading_time']}</span>
             </div>
-            <h2><a href="insights/{featured['slug']}.html">{featured['title']}</a></h2>
+            <h2><a href="/insights/{featured['slug']}.html">{featured['title']}</a></h2>
             <p>{featured['excerpt']}</p>
-            <a href="insights/{featured['slug']}.html" class="btn btn-primary">Read Full Analysis &rarr;</a>
+            <a href="/insights/{featured['slug']}.html" class="btn btn-primary">Read Full Analysis &rarr;</a>
           </div>
         </section>"""
 
@@ -407,9 +407,9 @@ def generate_insights_index(articles):
   <meta property="og:description" content="Curated analysis on portfolio management, asset allocation, digital assets, and wealth advisory by Ahmed Eisa.">
   <meta property="og:image" content="{AUTHOR_IMG}">
   <meta property="og:url" content="{SITE_URL}/insights.html">
-  <link rel="icon" href="assets/icons/ae-logo.svg">
-  <link rel="stylesheet" href="style.css">
-  <script src="main.js" defer></script>
+  <link rel="icon" href="/assets/icons/ae-logo.svg">
+  <link rel="stylesheet" href="/style.css">
+  <script src="/main.js" defer></script>
 </head>
 <body class="insights-index-page">
 <header id="site-header"></header>
@@ -536,9 +536,9 @@ def update_homepage(latest_articles):
           <span class="category-pill">{a['category']}</span>
           <span class="date">{a['formatted_date']}</span>
         </div>
-        <h3><a href="insights/{a['slug']}.html">{a['title']}</a></h3>
+        <h3><a href="/insights/{a['slug']}.html">{a['title']}</a></h3>
         <p>{a['excerpt'][:140]}...</p>
-        <a href="insights/{a['slug']}.html" class="read-link">Read analysis &rarr;</a>
+        <a href="/insights/{a['slug']}.html" class="read-link">Read analysis &rarr;</a>
       </article>""")
 
     section_html = f"""
@@ -555,7 +555,7 @@ def update_homepage(latest_articles):
       {''.join(cards)}
     </div>
     <div class="cta-row">
-      <a class="btn btn-outline" href="insights.html">View All Investment Insights &rarr;</a>
+      <a class="btn btn-outline" href="/insights.html">View All Investment Insights &rarr;</a>
     </div>
   </section>
 """
