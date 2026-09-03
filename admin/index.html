@@ -6,14 +6,140 @@
   <title>Content Manager | Ahmed Eisa — Investment Insights</title>
   <link rel="icon" href="../assets/icons/ae-logo.svg" />
   <style>
-    /* Custom admin header styling */
     body {
       margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: #f8fafc;
+    }
+    /* Token Auth Modal Overlay */
+    #tokenAuthModal {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(10, 25, 47, 0.85);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 999999;
+    }
+    .auth-box {
+      background: #ffffff;
+      padding: 36px 32px;
+      border-radius: 16px;
+      width: 100%;
+      max-width: 460px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      text-align: center;
+      border: 1px solid #e2e8f0;
+    }
+    .auth-logo {
+      width: 48px;
+      height: 48px;
+      margin: 0 auto 16px;
+      border-radius: 10px;
+    }
+    .auth-title {
+      font-size: 20px;
+      font-weight: 800;
+      color: #0a2540;
+      margin: 0 0 8px;
+    }
+    .auth-desc {
+      font-size: 13px;
+      color: #64748b;
+      line-height: 1.5;
+      margin: 0 0 22px;
+    }
+    .auth-input {
+      width: 100%;
+      padding: 12px 14px;
+      font-size: 14px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      box-sizing: border-box;
+      outline: none;
+      font-family: monospace;
+    }
+    .auth-input:focus {
+      border-color: #c8a43d;
+      box-shadow: 0 0 0 3px rgba(200, 164, 61, 0.2);
+    }
+    .btn-auth {
+      width: 100%;
+      padding: 12px;
+      background: #0a2540;
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-auth:hover {
+      background: #c8a43d;
+      color: #0a2540;
+    }
+    .auth-help {
+      margin-top: 18px;
+      font-size: 12px;
+      color: #94a3b8;
+    }
+    .auth-help a {
+      color: #0a2540;
+      font-weight: 600;
+      text-decoration: underline;
     }
   </style>
 </head>
 <body>
+
+  <!-- Token Login Modal -->
+  <div id="tokenAuthModal">
+    <div class="auth-box">
+      <img src="../assets/icons/ae-logo.svg" alt="AE" class="auth-logo" />
+      <h2 class="auth-title">Ahmed Eisa CMS Portal</h2>
+      <p class="auth-desc">Connect directly to your GitHub repository (<code>ah-eisa/ah-eisa-site</code>) using a Personal Access Token.</p>
+      <form id="tokenForm" onsubmit="handleTokenSubmit(event)">
+        <input type="password" id="ghToken" class="auth-input" placeholder="Paste GitHub Token (ghp_...)" required autocomplete="off" />
+        <button type="submit" class="btn-auth">Sign In &amp; Open CMS &rarr;</button>
+      </form>
+      <div class="auth-help">
+        Need a token? <a href="https://github.com/settings/tokens/new?scopes=repo&description=Ahmed+Eisa+CMS" target="_blank" rel="noopener">Generate a GitHub Token with repo access &rarr;</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Check if user is already logged in
+    (function checkAuth() {
+      var user = localStorage.getItem('netlify-cms-user');
+      if (!user || user === 'null') {
+        window.addEventListener('DOMContentLoaded', function() {
+          var modal = document.getElementById('tokenAuthModal');
+          if (modal) modal.style.display = 'flex';
+        });
+      }
+    })();
+
+    function handleTokenSubmit(e) {
+      e.preventDefault();
+      var input = document.getElementById('ghToken');
+      var token = input.value.trim();
+      if (!token) return;
+
+      var userData = {
+        backendName: 'github',
+        token: token,
+        isAnonymous: false
+      };
+      localStorage.setItem('netlify-cms-user', JSON.stringify(userData));
+      document.getElementById('tokenAuthModal').style.display = 'none';
+      window.location.reload();
+    }
+  </script>
+
   <!-- Decap CMS Core Script -->
   <script src="https://unpkg.com/decap-cms@^3.1.2/dist/decap-cms.js"></script>
 
