@@ -15,9 +15,9 @@ const HEADER_HTML = `
       <a href="/insights">Insights</a>
       <a href="/contact">Contact</a>
       <a class="nav-cv" href="/assets/pdf/Ahmed_Eisa_Investment_CV.pdf" target="_blank" rel="noopener">Download CV</a>
-      <button class="theme-toggle" id="themeToggle" aria-label="Toggle light and dark theme">?</button>
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle light and dark theme">&#9680;</button>
     </nav>
-    <button class="burger" id="burger" aria-label="Open menu">?</button>
+    <button class="burger" id="burger" aria-label="Open menu">&#9776;</button>
   </div>
   <div class="mobile-menu" id="mobileMenu">
     <a href="/">Home</a><a href="/about">Profile</a><a href="/experience">Experience</a>
@@ -30,7 +30,7 @@ const FOOTER_HTML = `
   <div class="footer-inner">
     <div class="footer-left">
       <div class="footer-title">Ahmed Eisa - Investment Portfolio & Wealth Management</div>
-      <div>? <span id="year"></span> ? Abu Dhabi, UAE</div>
+      <div>&copy; <span id="year"></span> &middot; Abu Dhabi, UAE</div>
       <div class="footer-avail"><span class="avail-dot"></span>Open to investment leadership opportunities</div>
     </div>
     <div class="footer-links">

@@ -1,7 +1,7 @@
 ---
 title: "ETF Flows 2025: Where Smart Money Moved"
 slug: "etf-flows-2025"
-excerpt: "Analysis of global ETF flows across gold, value, fixed income, and active strategies ? and what shifting institutional capital signals for portfolio allocation."
+excerpt: "Analysis of global ETF flows across gold, value, fixed income, and active strategies — and what shifting institutional capital signals for portfolio allocation."
 hero_image: "https://res.cloudinary.com/dfh3erwx1/image/upload/v1760280190/IMG_0073_vzkxvd.png"
 category: "Asset Allocation"
 tags: ["ETFs", "Capital Flows", "Gold", "Active Strategies", "Fixed Income", "Wealth Management"]

@@ -10,7 +10,8 @@ import urllib.request
 import urllib.parse
 import smtplib
 from http.server import HTTPServer, BaseHTTPRequestHandler
-from datetime import datetime
+from datetime import datetime, timezone
+from zoneinfo import ZoneInfo
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.utils import formatdate, make_msgid
@@ -107,42 +108,46 @@ def infer_category(text, default="Portfolio Strategy"):
         return "Asset Allocation"
     return default
 
-def send_telegram_alert(name, email, subject, message, client_ip=""):
-    try:
-        url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
-        timestamp_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-        # HTML Escape for safe Telegram rendering
-        h_name = html.escape(name)
-        h_email = html.escape(email)
-        h_subj = html.escape(subject)
-        h_msg = html.escape(message)
-        h_ip = html.escape(client_ip)
-
-        tg_text = (
-            f"?? <b>New Inquiry on ah-eisa.com</b>\n\n"
-            f"?? <b>Name:</b> {h_name}\n"
-            f"?? <b>Email:</b> {h_email}\n"
-            f"?? <b>Subject:</b> {h_subj}\n\n"
-            f"?? <b>Message:</b>\n{h_msg}\n\n"
-            f"?? <i>{timestamp_str} (GST/UAE)</i>\n"
-            f"?? <i>IP: {h_ip}</i>"
-        )
-        payload = {
-            "chat_id": TELEGRAM_CHAT_ID,
-            "text": tg_text,
-            "parse_mode": "HTML"
-        }
+def send_telegram_alert(name, email, subject, message, client_ip="", country="", lead_id=""):
+    def _post(payload):
         req = urllib.request.Request(
-            url,
+            f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage",
             data=json.dumps(payload).encode("utf-8"),
             headers={"Content-Type": "application/json"}
         )
-        with urllib.request.urlopen(req, timeout=10) as resp:
-            return True, "Telegram sent"
+        with urllib.request.urlopen(req, timeout=10):
+            return True
+
+    try:
+        now_str = datetime.now(ZoneInfo("Asia/Dubai")).strftime("%Y-%m-%d %H:%M")
+        shown_msg = message if len(message) <= 2500 else message[:2500] + "\n[... truncated - full text in email]"
+        where = client_ip + (f" \u00b7 {country}" if country else "")
+
+        tg_text = (
+            f"\U0001F514 <b>New inquiry \u2014 ah-eisa.com</b>\n\n"
+            f"\U0001F464 <b>{html.escape(name)}</b>\n"
+            f"\u2709\uFE0F {html.escape(email)}\n"
+            f"\U0001F4CC <b>{html.escape(subject) or '(no subject)'}</b>\n\n"
+            f"<blockquote>{html.escape(shown_msg)}</blockquote>\n"
+            f"\U0001F552 {now_str} (UAE)\n"
+            f"\U0001F30D {html.escape(where)}\n"
+            f"\U0001F194 <code>{html.escape(lead_id)}</code>"
+        )
+        try:
+            _post({"chat_id": TELEGRAM_CHAT_ID, "text": tg_text, "parse_mode": "HTML",
+                   "disable_web_page_preview": True})
+        except Exception:
+            # Fallback: plain text so the alert is never lost on a formatting error
+            plain = (
+                f"\U0001F514 New inquiry - ah-eisa.com\n\n"
+                f"Name: {name}\nEmail: {email}\nSubject: {subject}\n\n{shown_msg}\n\n"
+                f"{now_str} (UAE) | {where} | {lead_id}"
+            )
+            _post({"chat_id": TELEGRAM_CHAT_ID, "text": plain})
+        return True, "Telegram sent"
     except Exception as e:
-        print(f"[ERROR] Failed to send Telegram alert: {e}")
-        return False, str(e)
+        print(f"[ERROR] Failed to send Telegram alert: {type(e).__name__}")
+        return False, "telegram failed"
 
 def send_email_alert(name, email, subject, message, client_ip=""):
     try:
@@ -159,7 +164,7 @@ def send_email_alert(name, email, subject, message, client_ip=""):
         msg["Date"] = formatdate(localtime=True)
         msg["Message-ID"] = make_msgid(domain="ah-eisa.com")
 
-        timestamp_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        timestamp_str = datetime.now(ZoneInfo("Asia/Dubai")).strftime("%Y-%m-%d %H:%M:%S") + " (UAE)"
 
         plain_text = (
             f"New contact inquiry submitted on ah-eisa.com:\n\n"
@@ -279,6 +284,7 @@ class TaraPublishHandler(BaseHTTPRequestHandler):
                      or self.headers.get("X-Real-IP", "")
                      or self.address_string())
         user_agent = self.headers.get("User-Agent", "")[:250]
+        country = re.sub(r"[^A-Za-z]", "", self.headers.get("CF-IPCountry", ""))[:2].upper()
         content_type = self.headers.get("Content-Type", "")
 
         # 1. Rate Limiting Check
@@ -363,8 +369,8 @@ class TaraPublishHandler(BaseHTTPRequestHandler):
 
         # 6. Safe Record Creation
         lead_record = {
-            "id": f"lead_{int(datetime.utcnow().timestamp())}",
-            "created_at": datetime.utcnow().isoformat() + "Z",
+            "id": f"lead_{int(time.time())}",
+            "created_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
             "name": name,
             "email": email,
             "subject": subject,
@@ -377,8 +383,8 @@ class TaraPublishHandler(BaseHTTPRequestHandler):
         save_lead_record(lead_record)
 
         # 8. Dispatch Notifications
-        send_telegram_alert(name, email, subject, message, client_ip)
-        send_email_alert(name, email, subject, message, client_ip)
+        send_telegram_alert(name, email, subject, message, client_ip, country, lead_record["id"])
+        send_email_alert(name, email, subject, message, client_ip + (f" ({country})" if country else ""))
 
         # 9. Return Controlled Response
         accept_header = self.headers.get("Accept", "").lower()
