@@ -1,0 +1,9 @@
+# Robots.txt for ah-eisa.com
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+Disallow: /auth/
+Disallow: /content/
+
+Sitemap: https://ah-eisa.com/sitemap.xml

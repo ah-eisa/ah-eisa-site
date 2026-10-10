@@ -1,0 +1,25 @@
+# Environment & credentials
+.env
+.env.*
+*.pem
+*.key
+
+# Leads and private data
+content/leads.json
+leads.json
+
+# Backups and temporary files
+*.bak*
+*.old*
+*.orig
+*.save
+*.swp
+*~
+.deploy_backup/
+
+# Python cache & logs
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.log
