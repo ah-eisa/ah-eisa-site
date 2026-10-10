@@ -129,7 +129,7 @@ def generate_article_page(article, all_articles):
         cards = []
         for r in related:
             cards.append(f"""
-            <a class="related-card" href="/insights/{r['slug']}.html">
+            <a class="related-card" href="/insights/{r['slug']}">
               <span class="category-pill">{r['category']}</span>
               <h4>{r['title']}</h4>
               <p>{r['excerpt'][:110]}...</p>
@@ -217,8 +217,8 @@ def generate_article_page(article, all_articles):
   <!-- Breadcrumbs & Meta -->
   <div class="article-header">
     <nav class="breadcrumbs" aria-label="Breadcrumb">
-      <a href="/index.html">Home</a> &rsaquo;
-      <a href="/insights.html">Insights</a> &rsaquo;
+      <a href="/">Home</a> &rsaquo;
+      <a href="/insights">Insights</a> &rsaquo;
       <span>{article['category']}</span>
     </nav>
     <div class="article-meta-row">
@@ -275,7 +275,7 @@ def generate_article_page(article, all_articles):
   {related_html}
 
   <div class="back-to-insights">
-    <a href="/insights.html" class="btn btn-outline">&larr; Back to All Investment Insights</a>
+    <a href="/insights" class="btn btn-outline">&larr; Back to All Investment Insights</a>
   </div>
 
 </main>
@@ -320,7 +320,7 @@ def build():
         os.makedirs(slug_dir, exist_ok=True)
         with open(os.path.join(slug_dir, "index.html"), "w", encoding="utf-8") as f:
             f.write(html)
-        print(f"  Generated /insights/{a['slug']}.html and /insights/{a['slug']}/index.html")
+        print(f"  Generated /insights/{a['slug']} and /insights/{a['slug']}/index.html")
 
     # 2. Generate JSON manifest
     manifest = [
@@ -368,10 +368,10 @@ def generate_insights_index(articles):
             <span class="meta-dot">&middot;</span>
             <span class="reading-time">{a['reading_time']}</span>
           </div>
-          <h2 class="post-card-title"><a href="/insights/{a['slug']}.html">{a['title']}</a></h2>
+          <h2 class="post-card-title"><a href="/insights/{a['slug']}">{a['title']}</a></h2>
           <p class="post-card-excerpt">{a['excerpt']}</p>
           <div class="post-card-footer">
-            <a href="/insights/{a['slug']}.html" class="read-link">Read analysis &rarr;</a>
+            <a href="/insights/{a['slug']}" class="read-link">Read analysis &rarr;</a>
           </div>
         </article>""")
 
@@ -388,9 +388,9 @@ def generate_insights_index(articles):
               <span>&middot;</span>
               <span>{featured['reading_time']}</span>
             </div>
-            <h2><a href="/insights/{featured['slug']}.html">{featured['title']}</a></h2>
+            <h2><a href="/insights/{featured['slug']}">{featured['title']}</a></h2>
             <p>{featured['excerpt']}</p>
-            <a href="/insights/{featured['slug']}.html" class="btn btn-primary">Read Full Analysis &rarr;</a>
+            <a href="/insights/{featured['slug']}" class="btn btn-primary">Read Full Analysis &rarr;</a>
           </div>
         </section>"""
 
@@ -401,12 +401,12 @@ def generate_insights_index(articles):
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Investment Insights | Ahmed Eisa — Wealth & Portfolio Strategy</title>
   <meta name="description" content="Investment and portfolio insights by Ahmed Eisa. Expert analysis on multi-asset allocation, wealth management, UAE regulations, digital assets, and investment technology.">
-  <link rel="canonical" href="{SITE_URL}/insights.html">
+  <link rel="canonical" href="{SITE_URL}/insights">
   <meta property="og:type" content="website">
   <meta property="og:title" content="Investment Insights | Ahmed Eisa">
   <meta property="og:description" content="Curated analysis on portfolio management, asset allocation, digital assets, and wealth advisory by Ahmed Eisa.">
   <meta property="og:image" content="{AUTHOR_IMG}">
-  <meta property="og:url" content="{SITE_URL}/insights.html">
+  <meta property="og:url" content="{SITE_URL}/insights">
   <link rel="icon" href="/assets/icons/ae-logo.svg">
   <link rel="stylesheet" href="/style.css?v=20260903">
   <script src="/main.js?v=20260903" defer></script>
@@ -448,7 +448,7 @@ def generate_insights_index(articles):
     <div class="section-kicker">Direct Advisory</div>
     <h2 style="font-size: 24px; margin: 8px 0 16px;">Looking for tailored portfolio or product strategy?</h2>
     <p style="max-width: 620px; margin: 0 auto 24px; color: var(--text-muted);">Available for executive advisory, investment product design, regulatory licensing readiness, and institutional consulting.</p>
-    <a class="btn btn-primary" href="contact.html">Get in Touch</a>
+    <a class="btn btn-primary" href="/contact">Get in Touch</a>
   </section>
 
 </main>
@@ -536,9 +536,9 @@ def update_homepage(latest_articles):
           <span class="category-pill">{a['category']}</span>
           <span class="date">{a['formatted_date']}</span>
         </div>
-        <h3><a href="/insights/{a['slug']}.html">{a['title']}</a></h3>
+        <h3><a href="/insights/{a['slug']}">{a['title']}</a></h3>
         <p>{a['excerpt'][:140]}...</p>
-        <a href="/insights/{a['slug']}.html" class="read-link">Read analysis &rarr;</a>
+        <a href="/insights/{a['slug']}" class="read-link">Read analysis &rarr;</a>
       </article>""")
 
     section_html = f"""
@@ -555,7 +555,7 @@ def update_homepage(latest_articles):
       {''.join(cards)}
     </div>
     <div class="cta-row">
-      <a class="btn btn-outline" href="/insights.html">View All Investment Insights &rarr;</a>
+      <a class="btn btn-outline" href="/insights">View All Investment Insights &rarr;</a>
     </div>
   </section>
 """
