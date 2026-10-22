@@ -54,9 +54,10 @@ const FOOTER_HTML = `
     }
   });
 
-  function setMeta(prop,content,attr='property'){let el=document.querySelector(`meta[${attr}="${prop}"]`);if(!el){el=document.createElement('meta');el.setAttribute(attr,prop);document.head.appendChild(el)}el.setAttribute('content',content)}
+  function setMeta(prop,content,attr='property'){if(document.querySelector(`meta[${attr}="${prop}"]`))return;const el=document.createElement('meta');el.setAttribute(attr,prop);el.setAttribute('content',content);document.head.appendChild(el)}
   const title=document.title,desc=document.querySelector('meta[name="description"]')?.content||'';
-  setMeta('og:title',title);setMeta('og:description',desc);setMeta('og:image',OG_IMAGE);setMeta('og:type','website');setMeta('og:url',window.location.href);
+  const canonicalUrl=document.querySelector('link[rel="canonical"]')?.href||window.location.origin+window.location.pathname;
+  setMeta('og:title',title);setMeta('og:description',desc);setMeta('og:image',OG_IMAGE);setMeta('og:type','website');setMeta('og:url',canonicalUrl);
   setMeta('twitter:card','summary_large_image','name');setMeta('twitter:title',title,'name');setMeta('twitter:description',desc,'name');setMeta('twitter:image',OG_IMAGE,'name');
   const burger=document.getElementById('burger'),mobileMenu=document.getElementById('mobileMenu');
   if(burger&&mobileMenu)burger.addEventListener('click',()=>mobileMenu.classList.toggle('active'));

@@ -202,6 +202,7 @@ header.site{
 [data-theme="dark"] .post-cta a{color:#e5ca74}
 
 /* contact */
+.contact-actions{margin:0 0 20px}
 .contact-intro{padding:25px;border:1px solid var(--border);border-radius:17px;background:var(--surface);margin-bottom:24px}
 .open-for{display:flex;flex-wrap:wrap;gap:8px;margin:13px 0 18px}.open-for-pill{padding:7px 11px;border-radius:999px;background:var(--gold-soft);border:1px solid rgba(200,164,61,.25);font-size:.76rem;font-weight:800;color:var(--gold-dark)}
 .contact-direct{display:flex;flex-wrap:wrap;gap:8px}.contact-direct a{padding:8px 11px;border:1px solid var(--border);border-radius:9px;text-decoration:none;font-size:.78rem;font-weight:700;color:var(--muted)}

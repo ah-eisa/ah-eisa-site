@@ -76,6 +76,7 @@ def get_articles():
         slug = fm.get("slug") or os.path.splitext(fname)[0]
         title = fm.get("title", slug.replace("-", " ").title())
         date_raw = fm.get("date", datetime.now().strftime("%Y-%m-%d"))
+        updated_raw = fm.get("updated")
         category = fm.get("category", "Portfolio Strategy")
         tags = fm.get("tags", ["Investment Insights"])
         if isinstance(tags, str):
@@ -101,6 +102,9 @@ def get_articles():
             "date": str(date_raw),
             "formatted_date": format_date(date_raw),
             "iso_date": iso_date(date_raw),
+            "modified_date": iso_date(updated_raw or date_raw),
+            "reviewed_date": format_date(updated_raw) if updated_raw else "",
+            "data_as_of": fm.get("data_as_of", ""),
             "category": category,
             "tags": tags,
             "author": author,
@@ -147,6 +151,12 @@ def generate_article_page(article, all_articles):
     tags_html = "".join([f'<span class="tag-pill">#{t}</span>' for t in article["tags"]])
 
     hero_img_html = ""
+    review_html = ""
+    if article.get("reviewed_date"):
+        review_html = f'<p class="muted article-review">Reviewed <time datetime="{article["modified_date"]}">{article["reviewed_date"]}</time>'
+        if article.get("data_as_of"):
+            review_html += f' &middot; Data as of {article["data_as_of"]}'
+        review_html += '</p>'
     if article.get("hero_image") and article["hero_image"] != AUTHOR_IMG:
         hero_img_html = f"""
         <div class="article-hero-wrap">
@@ -170,6 +180,7 @@ def generate_article_page(article, all_articles):
   <meta property="og:url" content="{permalink}">
   <meta property="og:site_name" content="Ahmed Eisa | Investment & Wealth Management">
   <meta property="article:published_time" content="{article['iso_date']}">
+  <meta property="article:modified_time" content="{article['modified_date']}">
   <meta property="article:author" content="{article['author']}">
   <meta property="article:section" content="{article['category']}">
 
@@ -178,6 +189,7 @@ def generate_article_page(article, all_articles):
   <meta name="twitter:title" content="{article['title']}">
   <meta name="twitter:description" content="{article['excerpt']}">
   <meta name="twitter:image" content="{article['hero_image']}">
+  <meta name="twitter:url" content="{permalink}">
 
   <!-- JSON-LD Structured Data -->
   <script type="application/ld+json">
@@ -188,6 +200,7 @@ def generate_article_page(article, all_articles):
     "description": "{article['excerpt']}",
     "image": "{article['hero_image']}",
     "datePublished": "{article['iso_date']}",
+    "dateModified": "{article['modified_date']}",
     "author": {{
       "@type": "Person",
       "name": "{article['author']}",
@@ -207,8 +220,8 @@ def generate_article_page(article, all_articles):
   </script>
 
   <link rel="icon" href="/assets/icons/ae-logo.svg">
-  <link rel="stylesheet" href="/style.css?v=20260903">
-  <script src="/main.js?v=20260903" defer></script>
+  <link rel="stylesheet" href="/style.css?v=20261022-content">
+  <script src="/main.js?v=20261022-content" defer></script>
 </head>
 <body class="article-page">
 <header id="site-header"></header>
@@ -224,12 +237,13 @@ def generate_article_page(article, all_articles):
     </nav>
     <div class="article-meta-row">
       <span class="category-pill">{article['category']}</span>
-      <span class="article-date">{article['formatted_date']}</span>
+      <span class="article-date">Published {article['formatted_date']}</span>
       <span class="meta-dot">&middot;</span>
       <span class="article-reading-time">{article['reading_time']}</span>
     </div>
     <h1 class="article-title">{article['title']}</h1>
     <p class="article-lead">{article['excerpt']}</p>
+    {review_html}
   </div>
 
   {hero_img_html}
@@ -364,7 +378,7 @@ def generate_sitemap(articles):
     entries = {node.findtext(tag("loc")): node for node in root.findall(tag("url"))}
     for article in articles:
         url = f"{SITE_URL}/insights/{article['slug']}"
-        modified = str(article["iso_date"])[:10]
+        modified = str(article.get("modified_date", article["iso_date"]))[:10]
         node = entries.get(url)
         if node is None:
             node = ET.SubElement(root, tag("url"))
@@ -379,7 +393,7 @@ def generate_sitemap(articles):
                 lastmod.text = modified
 
     if articles:
-        latest = max(str(article["iso_date"])[:10] for article in articles)
+        latest = max(str(article.get("modified_date", article["iso_date"]))[:10] for article in articles)
         for url in (f"{SITE_URL}/", f"{SITE_URL}/insights"):
             node = entries.get(url)
             lastmod = node.find(tag("lastmod")) if node is not None else None
@@ -443,13 +457,19 @@ def generate_insights_index(articles):
   <meta name="description" content="Investment and portfolio insights by Ahmed Eisa. Expert analysis on multi-asset allocation, wealth management, UAE regulations, digital assets, and investment technology.">
   <link rel="canonical" href="{SITE_URL}/insights">
   <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Ahmed Eisa">
   <meta property="og:title" content="Investment Insights | Ahmed Eisa">
   <meta property="og:description" content="Curated analysis on portfolio management, asset allocation, digital assets, and wealth advisory by Ahmed Eisa.">
-  <meta property="og:image" content="{AUTHOR_IMG}">
+  <meta property="og:image" content="{SITE_URL}/assets/images/ah-eisa-og.png">
   <meta property="og:url" content="{SITE_URL}/insights">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Investment Insights | Ahmed Eisa">
+  <meta name="twitter:description" content="Curated analysis on portfolio management, asset allocation, digital assets, and wealth advisory by Ahmed Eisa.">
+  <meta name="twitter:image" content="{SITE_URL}/assets/images/ah-eisa-og.png">
+  <meta name="twitter:url" content="{SITE_URL}/insights">
   <link rel="icon" href="/assets/icons/ae-logo.svg">
-  <link rel="stylesheet" href="/style.css?v=20260903">
-  <script src="/main.js?v=20260903" defer></script>
+  <link rel="stylesheet" href="/style.css?v=20261022-content">
+  <script src="/main.js?v=20261022-content" defer></script>
 </head>
 <body class="insights-index-page">
 <header id="site-header"></header>

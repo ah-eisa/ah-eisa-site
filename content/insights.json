@@ -1,23 +1,22 @@
 [
   {
-    "slug": "tokenization-real-world-assets",
-    "title": "Tokenization of Real-World Assets: From Market Narrative to Investment Infrastructure",
-    "date": "2026-09-03",
-    "formatted_date": "2026-09-03",
-    "category": "Tokenization & RWA",
+    "slug": "when-ai-didnt-lead-what-one-session-revealed-about-valuation",
+    "title": "When AI Didn't Lead: What One Session Revealed About Valuation",
+    "date": "2026-10-21",
+    "formatted_date": "2026-10-21",
+    "category": "Markets & Macro",
     "tags": [
-      "Tokenization",
-      "RWA Infrastructure",
-      "RWA",
-      "Digital Assets",
-      "Investment Infrastructure",
-      "Capital Markets"
+      "Markets",
+      "Valuations",
+      "AI",
+      "Healthcare",
+      "Portfolio Strategy"
     ],
     "author": "Ahmed Eisa",
     "hero_image": "https://res.cloudinary.com/dfh3erwx1/image/upload/v1760280190/IMG_0073_vzkxvd.png",
-    "excerpt": "How tokenization is reshaping ownership, settlement, liquidity and investor access across traditional financial markets.",
-    "reading_time": "8 min read",
-    "url": "insights/tokenization-real-world-assets.html"
+    "excerpt": "For one session, the market broadened beyond AI. The more important signal was what happened next: earnings pulled investors straight back, exposing the tension between exceptional growth and exceptional valuations.",
+    "reading_time": "9 min read",
+    "url": "insights/when-ai-didnt-lead-what-one-session-revealed-about-valuation.html"
   },
   {
     "slug": "digital-sukuk-and-sovereign-debt-tokenization-in-the-gcc",
@@ -34,9 +33,29 @@
     ],
     "author": "Ahmed Eisa",
     "hero_image": "https://res.cloudinary.com/dfh3erwx1/image/upload/v1760280190/IMG_0073_vzkxvd.png",
-    "excerpt": "How regional capital markets and sovereign issuers across the GCC are leveraging programmable DLT infrastructure to issue Sharia-compliant digital sukuk with lower issuance costs and wider global distribution.",
-    "reading_time": "1 min read",
+    "excerpt": "What tokenized debt could offer GCC issuers, what published digital-bond transactions demonstrate, and why legal rights, liquidity and Sharia governance still require independent review.",
+    "reading_time": "3 min read",
     "url": "insights/digital-sukuk-and-sovereign-debt-tokenization-in-the-gcc.html"
+  },
+  {
+    "slug": "tokenization-real-world-assets",
+    "title": "Tokenization of Real-World Assets: From Market Narrative to Investment Infrastructure",
+    "date": "2026-09-03",
+    "formatted_date": "2026-09-03",
+    "category": "Tokenization & RWA",
+    "tags": [
+      "Tokenization",
+      "RWA Infrastructure",
+      "RWA",
+      "Digital Assets",
+      "Investment Infrastructure",
+      "Capital Markets"
+    ],
+    "author": "Ahmed Eisa",
+    "hero_image": "https://res.cloudinary.com/dfh3erwx1/image/upload/v1760280190/IMG_0073_vzkxvd.png",
+    "excerpt": "How tokenization is reshaping ownership, settlement, liquidity and investor access across traditional financial markets.",
+    "reading_time": "11 min read",
+    "url": "insights/tokenization-real-world-assets.html"
   },
   {
     "slug": "alternative-investments-building-a-portfolio-beyond-public-markets",
@@ -54,8 +73,8 @@
     ],
     "author": "Ahmed Eisa",
     "hero_image": "https://res.cloudinary.com/dfh3erwx1/image/upload/v1760280190/IMG_0073_vzkxvd.png",
-    "excerpt": "Why institutions are shifting 20 to 30 percent of portfolios into private markets, and the framework investors should use before allocating to alternatives.",
-    "reading_time": "5 min read",
+    "excerpt": "How private markets can fit a portfolio, the liquidity and manager risks that matter, and a framework for assessing alternatives without assuming a standard allocation.",
+    "reading_time": "7 min read",
     "url": "insights/alternative-investments-building-a-portfolio-beyond-public-markets.html"
   },
   {
@@ -77,7 +96,7 @@
     "author": "Ahmed Eisa",
     "hero_image": "https://res.cloudinary.com/dfh3erwx1/image/upload/v1760280190/IMG_0073_vzkxvd.png",
     "excerpt": "A practical blueprint for GCC investors moving beyond the equities-and-real-estate default: allocation framework, Shariah-compliant construction, and regional implementation realities.",
-    "reading_time": "10 min read",
+    "reading_time": "14 min read",
     "url": "insights/building-a-multi-asset-portfolio-in-the-gcc-beyond-equities-and-real-estate.html"
   },
   {
@@ -98,7 +117,7 @@
     "author": "Ahmed Eisa",
     "hero_image": "https://res.cloudinary.com/dfh3erwx1/image/upload/v1760280190/IMG_0073_vzkxvd.png",
     "excerpt": "Beyond the religious labels: how sukuk and conventional bonds truly compare on structure, credit risk, liquidity and returns, and the checklist investors should use.",
-    "reading_time": "5 min read",
+    "reading_time": "7 min read",
     "url": "insights/sukuk-vs-conventional-bonds-what-actually-matters-to-investors.html"
   },
   {
@@ -117,7 +136,7 @@
     "author": "Ahmed Eisa",
     "hero_image": "https://res.cloudinary.com/dfh3erwx1/image/upload/v1760280190/IMG_0073_vzkxvd.png",
     "excerpt": "A valuation and positioning summary focused on mega-cap concentration risk, small-cap opportunities, and the delicate balance between growth leadership and broader market breadth.",
-    "reading_time": "6 min read",
+    "reading_time": "3 min read",
     "url": "insights/q4-2025-stock-market-outlook.html"
   },
   {
@@ -136,7 +155,7 @@
     "author": "Ahmed Eisa",
     "hero_image": "https://res.cloudinary.com/dfh3erwx1/image/upload/v1760280190/IMG_0073_vzkxvd.png",
     "excerpt": "A practical roadmap from concept to regulatory go-live under the UAE SCA framework, connecting governance design and compliance documentation with real operating controls.",
-    "reading_time": "5 min read",
+    "reading_time": "3 min read",
     "url": "insights/sca-readiness-in-practice.html"
   },
   {
@@ -155,12 +174,12 @@
     "author": "Ahmed Eisa",
     "hero_image": "https://res.cloudinary.com/dfh3erwx1/image/upload/v1760280190/IMG_0073_vzkxvd.png",
     "excerpt": "Structural portfolio pitfalls including account sprawl, overlapping fund holdings, stale allocations, and inefficient asset placement \u2014 with actionable fixes.",
-    "reading_time": "7 min read",
+    "reading_time": "4 min read",
     "url": "insights/5-common-portfolio-mistakes.html"
   },
   {
     "slug": "etf-flows-2025",
-    "title": "ETF Flows 2025: Where Smart Money Moved",
+    "title": "ETF Flows 2025: A Mid-Year Snapshot",
     "date": "2025-08-20",
     "formatted_date": "August 20, 2025",
     "category": "Asset Allocation",
@@ -174,8 +193,8 @@
     ],
     "author": "Ahmed Eisa",
     "hero_image": "https://res.cloudinary.com/dfh3erwx1/image/upload/v1760280190/IMG_0073_vzkxvd.png",
-    "excerpt": "Analysis of global ETF flows across gold, value, fixed income, and active strategies \u2014 and what shifting institutional capital signals for portfolio allocation.",
-    "reading_time": "5 min read",
+    "excerpt": "A historical snapshot through July 2025: what documented gold ETF flows show, what they do not establish, and how to evaluate value, fixed income and active ETF exposure.",
+    "reading_time": "3 min read",
     "url": "insights/etf-flows-2025.html"
   }
 ]

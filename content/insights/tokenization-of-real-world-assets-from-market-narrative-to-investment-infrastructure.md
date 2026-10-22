@@ -15,10 +15,11 @@ tags:
   - Capital Markets
 author: Ahmed Eisa
 date: 2026-09-03
-reading_time: 8 min read
+reading_time: "11 min read"
 seo_title: "Real-World Asset Tokenization: Investment Infrastructure Explained"
 meta_description: Explore how real-world asset tokenization is transforming
   ownership, settlement, liquidity and investment access across capital markets.
+updated: "2026-10-22"
 ---
 ## **Tokenization of Real-World Assets: From Market Narrative to Investment Infrastructure**
 
@@ -300,7 +301,7 @@ For the UAE, tokenization is particularly relevant because the country already s
 
 And the institutional direction is becoming increasingly visible.
 
-In August 2026, Coinbase announced that it had received Financial Services Permission from the Financial Services Regulatory Authority of ADGM to establish an international tokenization hub in Abu Dhabi, including activities intended to facilitate tokenized securities.
+In a company announcement dated 11 August 2026 and hosted on ADGM's website, Coinbase said it had received Financial Services Permission for an Abu Dhabi tokenization hub, including arranging and custody activities intended to facilitate tokenized securities. The hosted item is labelled a third-party communication, rather than an official ADGM statement; its account should be read alongside the actual permission and its conditions.
 
 That is significant not simply because another digital-asset company has entered the market.
 
@@ -376,12 +377,10 @@ That, in my view, is where the real investment case for tokenization begins.
 
 This article represents the author's personal views and is provided for informational purposes only. It does not constitute investment, legal or financial advice.
 
-#### Sources worth linking from the article
+#### Sources and scope
 
-For the institutional/tokenization sections, the strongest references are the BIS work on next-generation tokenized financial infrastructure and financial-stability implications.
+- [BIS, The next-generation monetary and financial system](https://www.bis.org/publications/aer-2025/next-generation-monetary-financial-system), Annual Economic Report 2025: monetary and settlement infrastructure, including legal and institutional conditions.
+- [BIS Bulletin 107, Tokenisation of government bonds](https://www.bis.org/publications/bulletin-107-tokenisation-government-bonds-assessment-and-roadmap), 10 July 2025: potential efficiencies and implementation constraints.
+- [Coinbase company communication hosted by ADGM](https://www.adgm.com/media/announcements/coinbase-establishes-its-tokenization-hub-in-abu-dhabi-with-financial-services-permission-from-the-financial-services-regulatory-authority), 11 August 2026: a company-reported permission, not a blanket regulatory approval of tokenized investments.
 
-For the UAE section, the August 2026 ADGM announcement on Coinbase's Abu Dhabi tokenization hub is particularly useful and very current.
-
-https://www.bis.org/publications/aer-2025/next-generation-monetary-financial-system
-
-https://www.adgm.com/media/announcements/coinbase-establishes-its-tokenization-hub-in-abu-dhabi-with-financial-services-permission-from-the-financial-services-regulatory-authority
+The property example is hypothetical. Views on portfolio use are the author's interpretation; tokenization does not establish liquidity, legal ownership or suitability by itself.
