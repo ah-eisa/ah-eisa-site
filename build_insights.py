@@ -3,6 +3,7 @@ import re
 import json
 import yaml
 import markdown
+import xml.etree.ElementTree as ET
 from datetime import datetime
 
 SITE_URL = "https://ah-eisa.com"
@@ -349,7 +350,46 @@ def build():
     # 4. Update homepage index.html with latest 3 articles
     update_homepage(articles[:3])
 
+    # Keep newly published articles discoverable without a manual sitemap edit.
+    generate_sitemap(articles)
+
     print("Build completed successfully!")
+
+def generate_sitemap(articles):
+    namespace = "http://www.sitemaps.org/schemas/sitemap/0.9"
+    ET.register_namespace("", namespace)
+    tag = lambda name: f"{{{namespace}}}{name}"
+    tree = ET.parse("sitemap.xml", parser=ET.XMLParser(target=ET.TreeBuilder(insert_comments=True)))
+    root = tree.getroot()
+    entries = {node.findtext(tag("loc")): node for node in root.findall(tag("url"))}
+    for article in articles:
+        url = f"{SITE_URL}/insights/{article['slug']}"
+        modified = str(article["iso_date"])[:10]
+        node = entries.get(url)
+        if node is None:
+            node = ET.SubElement(root, tag("url"))
+            ET.SubElement(node, tag("loc")).text = url
+            ET.SubElement(node, tag("lastmod")).text = modified
+            ET.SubElement(node, tag("changefreq")).text = "monthly"
+            ET.SubElement(node, tag("priority")).text = "0.7"
+            entries[url] = node
+        else:
+            lastmod = node.find(tag("lastmod"))
+            if lastmod is not None and modified > (lastmod.text or ""):
+                lastmod.text = modified
+
+    if articles:
+        latest = max(str(article["iso_date"])[:10] for article in articles)
+        for url in (f"{SITE_URL}/", f"{SITE_URL}/insights"):
+            node = entries.get(url)
+            lastmod = node.find(tag("lastmod")) if node is not None else None
+            if lastmod is not None and latest > (lastmod.text or ""):
+                lastmod.text = latest
+    ET.indent(tree, space="  ")
+    with open("sitemap.xml", "wb") as output:
+        tree.write(output, encoding="UTF-8", xml_declaration=True)
+        output.write(b"\n")
+    print(f"  Updated sitemap.xml with {len(articles)} articles")
 
 def generate_insights_index(articles):
     # Category pills
