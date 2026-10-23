@@ -1,14 +1,19 @@
 #!/usr/bin/env bash
+set -euo pipefail
+PATH=/usr/sbin:/usr/bin:/sbin:/bin
 # ==============================================================================
 # Hardened Automatic Insights Publishing Pipeline
 # ah-eisa.com ? Ahmed Eisa Investment Portfolio Management
 # ==============================================================================
 
 LOG_FILE="/var/log/insights_sync.log"
-LOCK_FILE="/tmp/insights_sync.lock"
+LOCK_FILE="/run/ah-eisa-deploy/sync.lock"
 WEB_ROOT="/var/www/ah-eisa.com"
-BACKUP_DIR="${WEB_ROOT}/.deploy_backup"
-COMMIT_RECORD="${WEB_ROOT}/.last_successful_commit"
+BACKUP_DIR="/var/backups/ah-eisa-deploy/current"
+COMMIT_RECORD="/var/lib/ah-eisa-deploy/last-successful-commit"
+
+umask 022
+install -d -m 700 /run/ah-eisa-deploy /var/lib/ah-eisa-deploy /var/backups/ah-eisa-deploy
 
 # 1. Prevent overlapping cron runs using file locking
 exec 200>"${LOCK_FILE}"
@@ -18,7 +23,6 @@ if ! flock -n 200; then
 fi
 
 cd "${WEB_ROOT}" || exit 1
-git config --global --add safe.directory "${WEB_ROOT}"
 
 # 2. Check for new commits on GitHub
 if ! git fetch origin main -q 2>> "${LOG_FILE}"; then
@@ -37,7 +41,7 @@ fi
 echo "$(date): New commit detected ($REMOTE_COMMIT). Initiating hardened deployment..." >> "${LOG_FILE}"
 
 # 3. Create a snapshot buffer for atomic rollback
-mkdir -p "${BACKUP_DIR}"
+install -d -m 700 "${BACKUP_DIR}"
 rm -rf "${BACKUP_DIR:?}"/*
 if [ -d "insights" ]; then cp -r insights "${BACKUP_DIR}/" 2>/dev/null || true; fi
 if [ -d "content" ]; then cp -r content "${BACKUP_DIR}/" 2>/dev/null || true; fi
@@ -50,7 +54,8 @@ rollback() {
     echo "$(date): Deployment failed! Rolling back to previous working snapshot..." >> "${LOG_FILE}"
     if [ -d "${BACKUP_DIR}" ]; then
         cp -r "${BACKUP_DIR}"/* "${WEB_ROOT}/" 2>/dev/null || true
-        chown -R www-data:www-data "${WEB_ROOT}"
+        chown -R root:root "${WEB_ROOT}"
+        chmod 700 "${WEB_ROOT}/.git"
         echo "$(date): Rollback completed successfully. Live site remains operational." >> "${LOG_FILE}"
     else
         echo "$(date): Warning: No snapshot directory available to restore." >> "${LOG_FILE}"
@@ -112,7 +117,9 @@ fi
 
 # 7. Deployment Validated: Record successful commit and set permissions
 echo "$REMOTE_COMMIT" > "${COMMIT_RECORD}"
-chown -R www-data:www-data "${WEB_ROOT}"
+chown -R root:root "${WEB_ROOT}"
+chmod 700 "${WEB_ROOT}/.git"
+install -o root -g root -m 700 "${WEB_ROOT}/sync_articles.sh" /usr/local/sbin/ah-eisa-deploy
 # Clean up temporary backup to save disk space
 rm -rf "${BACKUP_DIR:?}"/*
 

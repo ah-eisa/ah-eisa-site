@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
+"""Contact intake only. Article publishing and the legacy CMS are retired."""
 import os
 import re
 import json
 import time
 import html
+import ipaddress
+import tempfile
 import threading
-import subprocess
 import urllib.request
 import urllib.parse
 import smtplib
@@ -17,35 +19,23 @@ from email.mime.multipart import MIMEMultipart
 from email.utils import formatdate, make_msgid
 
 PORT = 8099
-SECRET_TOKEN = "tara_sec_89d31fbe61c9443db489e29a8a70659e"
-WEB_ROOT = "/var/www/ah-eisa.com"
-CONTENT_DIR = os.path.join(WEB_ROOT, "content", "insights")
-LEADS_FILE = os.path.join(WEB_ROOT, "content", "leads.json")
+STATE_DIR = os.path.realpath(os.environ.get("AH_EISA_STATE_DIR", "/var/lib/ah-eisa-contact"))
+if STATE_DIR == "/var/www" or STATE_DIR.startswith("/var/www/"):
+    raise RuntimeError("Contact state must be outside the public web root")
+LEADS_FILE = os.path.join(STATE_DIR, "leads.json")
 
-# Notifications Configuration
-TELEGRAM_BOT_TOKEN = "8609026379:AAGYLDU3Nk0tCSZN1zD9-jDRoie-BrImiaE"
-TELEGRAM_CHAT_ID = 933252341
+# Provisioned by the root-owned systemd EnvironmentFile, never tracked source.
+TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "")
+TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID", "")
 CONTACT_RECIPIENT_EMAIL = "Ahmed.eisa.2009@gmail.com"
 CONTACT_FROM_EMAIL = "contact@ah-eisa.com"
 
-# Input Constraints
 MAX_NAME_LEN = 120
 MAX_EMAIL_LEN = 254
 MAX_SUBJECT_LEN = 200
 MAX_MESSAGE_LEN = 5000
 MIN_MESSAGE_LEN = 5
 EMAIL_REGEX = re.compile(r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$")
-
-VALID_CATEGORIES = [
-    "Portfolio Strategy",
-    "Wealth Management",
-    "Asset Allocation",
-    "Digital Assets",
-    "Tokenization & RWA",
-    "Islamic Finance",
-    "Markets & Macro",
-    "Investment Technology"
-]
 
 class RateLimiter:
     """Thread-safe in-memory rate limiter for contact form abuse protection."""
@@ -66,6 +56,10 @@ class RateLimiter:
             if len(self.global_records) >= self.global_limit:
                 return False, "Global inquiry threshold reached. Please email directly."
 
+            self.ip_records = {key: [t for t in values if t > cutoff]
+                               for key, values in self.ip_records.items()
+                               if any(t > cutoff for t in values)}
+
             # Clean expired IP records
             records = [t for t in self.ip_records.get(ip, []) if t > cutoff]
             if len(records) >= self.ip_limit:
@@ -79,36 +73,10 @@ class RateLimiter:
 # Singleton Rate Limiter
 rate_limiter = RateLimiter(ip_limit=5, global_limit=30, window_seconds=3600)
 
-def slugify(text):
-    text = text.lower().strip()
-    text = re.sub(r"[^\w\s-]", "", text)
-    text = re.sub(r"[\s_-]+", "-", text)
-    return text.strip("-")
-
-def calc_reading_time(text):
-    words = len(re.findall(r"\w+", text))
-    minutes = max(1, round(words / 200))
-    return f"{minutes} min read"
-
-def infer_category(text, default="Portfolio Strategy"):
-    text_lower = text.lower()
-    if any(k in text_lower for k in ["token", "rwa", "real-world asset", "smart contract"]):
-        return "Tokenization & RWA"
-    if any(k in text_lower for k in ["islamic", "sukuk", "sharia", "takaful", "mudaraba"]):
-        return "Islamic Finance"
-    if any(k in text_lower for k in ["crypto", "digital asset", "vara", "sca", "web3"]):
-        return "Digital Assets"
-    if any(k in text_lower for k in ["macro", "inflation", "fed", "interest rate", "gdp", "market outlook"]):
-        return "Markets & Macro"
-    if any(k in text_lower for k in ["fintech", "ai", "algorithm", "trading platform", "technology"]):
-        return "Investment Technology"
-    if any(k in text_lower for k in ["wealth", "family office", "estate", "hnw", "private bank"]):
-        return "Wealth Management"
-    if any(k in text_lower for k in ["allocation", "diversification", "etf", "bond", "equity"]):
-        return "Asset Allocation"
-    return default
-
 def send_telegram_alert(name, email, subject, message, client_ip="", country="", lead_id=""):
+    if not TELEGRAM_BOT_TOKEN or not TELEGRAM_CHAT_ID:
+        return False, "telegram not configured"
+
     def _post(payload):
         req = urllib.request.Request(
             f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage",
@@ -216,40 +184,70 @@ def send_email_alert(name, email, subject, message, client_ip=""):
         s.quit()
         return True, "Email sent successfully"
     except Exception as e:
-        print(f"[ERROR] Failed to send email alert: {e}")
-        return False, str(e)
+        print(f"[ERROR] Failed to send email alert: {type(e).__name__}")
+        return False, "email failed"
 
 def save_lead_record(lead_data):
+    """Keep private records durable; never truncate them on a failed read/write."""
+    temporary = None
     try:
-        os.makedirs(os.path.dirname(LEADS_FILE), exist_ok=True)
+        os.makedirs(STATE_DIR, mode=0o700, exist_ok=True)
         leads = []
         if os.path.exists(LEADS_FILE):
-            try:
-                with open(LEADS_FILE, "r", encoding="utf-8") as f:
-                    leads = json.load(f)
-                if not isinstance(leads, list):
-                    leads = []
-            except Exception:
-                leads = []
+            flags = os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0)
+            with os.fdopen(os.open(LEADS_FILE, flags), "r", encoding="utf-8") as existing:
+                leads = json.load(existing)
+            if not isinstance(leads, list):
+                raise ValueError("Invalid private record store")
         leads.append(lead_data)
-        with open(LEADS_FILE, "w", encoding="utf-8") as f:
-            json.dump(leads, f, ensure_ascii=False, indent=2)
+        with tempfile.NamedTemporaryFile(mode="w", encoding="utf-8", dir=STATE_DIR,
+                                         prefix=".leads-", delete=False) as output:
+            temporary = output.name
+            os.chmod(temporary, 0o600)
+            json.dump(leads, output, ensure_ascii=False, indent=2)
+            output.flush()
+            os.fsync(output.fileno())
+        os.replace(temporary, LEADS_FILE)
+        temporary = None
         return True
-    except Exception as e:
-        print(f"[ERROR] Failed to save lead record: {e}")
+    except Exception as error:
+        print(f"[ERROR] Private inquiry persistence failed: {type(error).__name__}")
         return False
+    finally:
+        if temporary is not None:
+            try:
+                os.unlink(temporary)
+            except OSError:
+                pass
 
 class TaraPublishHandler(BaseHTTPRequestHandler):
+    def setup(self):
+        super().setup()
+        self.connection.settimeout(5)
+
+    def canonical_client_ip(self):
+        peer = ipaddress.ip_address(self.client_address[0])
+        # Only the local reverse proxy can provide the canonical client header.
+        # Nginx overwrites this header using its trusted real-IP processing.
+        if peer.is_loopback:
+            forwarded = self.headers.get("X-Ah-Eisa-Client-IP", "")
+            try:
+                return str(ipaddress.ip_address(forwarded))
+            except ValueError:
+                pass
+        return str(peer)
+
     def log_message(self, format, *args):
-        # Sanitize logs: do not print tokens or query params
-        client_ip = self.headers.get("X-Forwarded-For", "").split(",")[0].strip() or self.address_string()
-        print(f"[{datetime.now().isoformat()}] {client_ip} - {format % args}")
+        route = self.path.split("?", 1)[0].rstrip("/")
+        safe_route = route if route in ("/health", "/contact", "/api/contact") else "unknown-route"
+        print(f"[{datetime.now(timezone.utc).isoformat()}] {self.command} {safe_route}")
 
     def send_json(self, status, payload):
         data = json.dumps(payload).encode("utf-8")
         self.send_response(status)
         self.send_header("Content-Type", "application/json; charset=utf-8")
         self.send_header("Content-Length", str(len(data)))
+        self.send_header("Cache-Control", "no-store")
         self.send_header("X-Content-Type-Options", "nosniff")
         self.end_headers()
         self.wfile.write(data)
@@ -262,27 +260,25 @@ class TaraPublishHandler(BaseHTTPRequestHandler):
         self.end_headers()
 
     def do_GET(self):
-        clean_path = self.path.split("?")[0].rstrip("/")
-        if clean_path in ["/health", "/publish", "/api/publish"]:
-            self.send_json(200, {"status": "ok", "site": "ah-eisa.com"})
-        elif clean_path in ["/contact", "/api/contact"]:
+        route = self.path.split("?", 1)[0].rstrip("/")
+        if route in ("/health", "/contact", "/api/contact"):
             self.send_json(200, {"status": "ok", "service": "Inquiry API", "site": "ah-eisa.com"})
+        elif route in ("/publish", "/api/publish"):
+            self.send_json(410, {"error": "Publishing API retired."})
         else:
             self.send_json(404, {"error": "Not Found"})
 
     def do_POST(self):
-        clean_path = self.path.split("?")[0].rstrip("/")
-        if clean_path in ["/contact", "/api/contact"]:
+        route = self.path.split("?", 1)[0].rstrip("/")
+        if route in ("/contact", "/api/contact"):
             self.handle_contact()
-        elif clean_path in ["/publish", "/api/publish"]:
-            self.handle_publish()
+        elif route in ("/publish", "/api/publish"):
+            self.send_json(410, {"error": "Publishing API retired."})
         else:
             self.send_json(404, {"error": "Not Found"})
 
     def handle_contact(self):
-        client_ip = (self.headers.get("X-Forwarded-For", "").split(",")[0].strip()
-                     or self.headers.get("X-Real-IP", "")
-                     or self.address_string())
+        client_ip = self.canonical_client_ip()
         user_agent = self.headers.get("User-Agent", "")[:250]
         country = re.sub(r"[^A-Za-z]", "", self.headers.get("CF-IPCountry", ""))[:2].upper()
         content_type = self.headers.get("Content-Type", "")
@@ -295,7 +291,14 @@ class TaraPublishHandler(BaseHTTPRequestHandler):
 
         # 2. Read Request Body with Limit (max 32KB)
         try:
-            content_len = int(self.headers.get("Content-Length", 0))
+            lengths = self.headers.get_all("Content-Length", [])
+            if len(lengths) != 1 or not re.fullmatch(r"[0-9]{1,8}", lengths[0]):
+                self.send_json(400, {"ok": False, "error": "Invalid request length."})
+                return
+            content_len = int(lengths[0])
+            if content_len < 1:
+                self.send_json(400, {"ok": False, "error": "Request body is required."})
+                return
             if content_len > 32768:
                 self.send_json(413, {"ok": False, "error": "Request entity too large."})
                 return
@@ -316,6 +319,14 @@ class TaraPublishHandler(BaseHTTPRequestHandler):
         else:
             parsed = urllib.parse.parse_qs(body_raw)
             data = {k: v[0] if len(v) == 1 else v for k, v in parsed.items()}
+
+        if not isinstance(data, dict):
+            self.send_json(400, {"ok": False, "error": "Expected a form object."})
+            return
+        for field in ("name", "email", "subject", "message", "_hp_company", "company_hp", "website"):
+            if field in data and not isinstance(data[field], str):
+                self.send_json(400, {"ok": False, "error": "Form fields must be text."})
+                return
 
         # 3. Honeypot Abuse Check
         honeypot = (data.get("_hp_company", "").strip()
@@ -380,7 +391,9 @@ class TaraPublishHandler(BaseHTTPRequestHandler):
         }
 
         # 7. Persistent Local Storage
-        save_lead_record(lead_record)
+        if not save_lead_record(lead_record):
+            self.send_json(503, {"ok": False, "error": "Unable to save your inquiry. Please email directly."})
+            return
 
         # 8. Dispatch Notifications
         send_telegram_alert(name, email, subject, message, client_ip, country, lead_record["id"])
@@ -398,129 +411,10 @@ class TaraPublishHandler(BaseHTTPRequestHandler):
             self.send_header("Location", "/thank-you.html")
             self.end_headers()
 
-    def handle_publish(self):
-        auth_header = self.headers.get("X-Tara-Secret", "")
-        if not auth_header:
-            bearer = self.headers.get("Authorization", "")
-            if bearer.startswith("Bearer "):
-                auth_header = bearer[7:].strip()
-
-        if auth_header != SECRET_TOKEN:
-            self.send_json(401, {"error": "Unauthorized."})
-            return
-
-        try:
-            content_len = int(self.headers.get("Content-Length", 0))
-            if content_len > 1048576: # 1MB max for article
-                self.send_json(413, {"error": "Article payload too large."})
-                return
-            body_raw = self.rfile.read(content_len).decode("utf-8")
-            data = json.loads(body_raw)
-        except Exception:
-            self.send_json(400, {"error": "Invalid payload format."})
-            return
-
-        title = str(data.get("title", "")).strip()
-        body = str(data.get("body", "")).strip()
-
-        if not title:
-            self.send_json(400, {"error": "Missing 'title' field."})
-            return
-        if not body:
-            self.send_json(400, {"error": "Missing 'body' field."})
-            return
-
-        slug = data.get("slug") or slugify(title)
-        category = data.get("category")
-        if not category or category not in VALID_CATEGORIES:
-            category = infer_category(f"{title} {body}")
-
-        tags = data.get("tags")
-        if not tags:
-            tags = [category, "Investment Strategy"]
-        elif isinstance(tags, str):
-            tags = [t.strip() for t in tags.split(",") if t.strip()]
-
-        excerpt = data.get("excerpt", "").strip()
-        if not excerpt:
-            for p in body.split("\n\n"):
-                clean = re.sub(r"[#*`_\[\]]", "", p).strip()
-                if clean:
-                    excerpt = clean[:180] + ("..." if len(clean) > 180 else "")
-                    break
-
-        hero_image = data.get("hero_image") or "https://res.cloudinary.com/dfh3erwx1/image/upload/v1760280190/IMG_0073_vzkxvd.png"
-        author = data.get("author") or "Ahmed Eisa"
-        date_str = data.get("date") or datetime.now().strftime("%Y-%m-%d")
-        reading_time = data.get("reading_time") or calc_reading_time(body)
-        seo_title = data.get("seo_title") or f"{title} | Ahmed Eisa"
-        meta_description = data.get("meta_description") or excerpt
-
-        tags_json = json.dumps(tags, ensure_ascii=False)
-        md_content = f"""---
-title: "{title}"
-slug: "{slug}"
-excerpt: "{excerpt}"
-hero_image: "{hero_image}"
-category: "{category}"
-tags: {tags_json}
-author: "{author}"
-date: "{date_str}"
-reading_time: "{reading_time}"
-seo_title: "{seo_title}"
-meta_description: "{meta_description}"
----
-
-{body}
-"""
-
-        os.makedirs(CONTENT_DIR, exist_ok=True)
-        filename = f"{slug}.md"
-        filepath = os.path.join(CONTENT_DIR, filename)
-
-        try:
-            with open(filepath, "w", encoding="utf-8") as f:
-                f.write(md_content)
-        except Exception as e:
-            self.send_json(500, {"error": "Failed to persist article."})
-            return
-
-        try:
-            build_res = subprocess.run(
-                ["python3", "build_insights.py"],
-                cwd=WEB_ROOT,
-                capture_output=True,
-                text=True,
-                timeout=30
-            )
-            if build_res.returncode != 0:
-                print("build_insights.py notice:", build_res.stderr[:200])
-        except Exception as e:
-            print("Failed to run build_insights.py:", e)
-
-        try:
-            subprocess.run(["git", "add", "."], cwd=WEB_ROOT, capture_output=True)
-            subprocess.run(["git", "commit", "-m", f"feat(tara): publish article '{title}'"], cwd=WEB_ROOT, capture_output=True)
-            subprocess.Popen(["git", "push", "origin", "main"], cwd=WEB_ROOT)
-        except Exception as e:
-            print("Git push notice:", e)
-
-        article_url = f"https://ah-eisa.com/insights/{slug}/"
-        self.send_json(200, {
-            "success": True,
-            "url": article_url,
-            "slug": slug,
-            "title": title,
-            "category": category,
-            "tags": tags,
-            "reading_time": reading_time,
-            "published_at": date_str,
-            "message": "Article successfully published"
-        })
 
 def run():
     server = HTTPServer(("127.0.0.1", PORT), TaraPublishHandler)
-    print(f"Hardened Tara API running on http://127.0.0.1:{PORT}")
+    print(f"Contact API listening on loopback port {PORT}")
     try:
         server.serve_forever()
     except KeyboardInterrupt:

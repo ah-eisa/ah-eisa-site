@@ -40,6 +40,9 @@ const FOOTER_HTML = `
   </div>`;
 
 (function initShell(){
+  // Remove credentials left by the retired CMS; public pages need no GitHub token.
+  try { ['gh_token','netlify-cms-user'].forEach(key=>localStorage.removeItem(key)); } catch (_) {}
+
   const h=document.getElementById('site-header'),f=document.getElementById('site-footer');
   if(h){h.className='site';h.innerHTML=HEADER_HTML} if(f){f.className='site';f.innerHTML=FOOTER_HTML}
   const y=document.getElementById('year'); if(y)y.textContent=new Date().getFullYear();

@@ -1,0 +1,38 @@
+[Unit]
+Description=Private contact intake for ah-eisa.com
+After=network.target
+
+[Service]
+Type=simple
+User=ah-eisa-contact
+Group=ah-eisa-contact
+WorkingDirectory=/var/www/ah-eisa.com
+EnvironmentFile=/etc/ah-eisa/contact.env
+Environment=PYTHONDONTWRITEBYTECODE=1
+ExecStart=/usr/bin/python3 /var/www/ah-eisa.com/tara_publisher.py
+Restart=on-failure
+RestartSec=5
+UMask=0077
+StateDirectory=ah-eisa-contact
+StateDirectoryMode=0700
+NoNewPrivileges=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectKernelLogs=true
+ProtectControlGroups=true
+ProtectClock=true
+ProtectHostname=true
+RestrictSUIDSGID=true
+RestrictRealtime=true
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+LockPersonality=true
+CapabilityBoundingSet=
+AmbientCapabilities=
+ReadWritePaths=/var/lib/ah-eisa-contact
+
+[Install]
+WantedBy=multi-user.target

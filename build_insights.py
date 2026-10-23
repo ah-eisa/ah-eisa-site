@@ -1,4 +1,4 @@
-﻿import os
+import os
 import re
 import json
 import yaml
@@ -66,6 +66,7 @@ def get_articles():
     if not os.path.exists(content_dir):
         return []
     articles = []
+    seen_slugs = set()
     for fname in os.listdir(content_dir):
         if not fname.endswith(".md"):
             continue
@@ -74,6 +75,11 @@ def get_articles():
             raw = f.read()
         fm, body = parse_frontmatter(raw)
         slug = fm.get("slug") or os.path.splitext(fname)[0]
+        if not isinstance(slug, str) or not re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*", slug):
+            raise ValueError(f"Invalid article slug in {fname}")
+        if slug in seen_slugs:
+            raise ValueError(f"Duplicate article slug in {fname}")
+        seen_slugs.add(slug)
         title = fm.get("title", slug.replace("-", " ").title())
         date_raw = fm.get("date", datetime.now().strftime("%Y-%m-%d"))
         updated_raw = fm.get("updated")
@@ -221,7 +227,7 @@ def generate_article_page(article, all_articles):
 
   <link rel="icon" href="/assets/icons/ae-logo.svg">
   <link rel="stylesheet" href="/style.css?v=20261022-content">
-  <script src="/main.js?v=20261022-content" defer></script>
+  <script src="/main.js?v=20261022-security" defer></script>
 </head>
 <body class="article-page">
 <header id="site-header"></header>
@@ -469,7 +475,7 @@ def generate_insights_index(articles):
   <meta name="twitter:url" content="{SITE_URL}/insights">
   <link rel="icon" href="/assets/icons/ae-logo.svg">
   <link rel="stylesheet" href="/style.css?v=20261022-content">
-  <script src="/main.js?v=20261022-content" defer></script>
+  <script src="/main.js?v=20261022-security" defer></script>
 </head>
 <body class="insights-index-page">
 <header id="site-header"></header>
