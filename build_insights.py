@@ -4,6 +4,7 @@ import json
 import yaml
 import markdown
 import xml.etree.ElementTree as ET
+from html import escape
 from datetime import datetime
 
 SITE_URL = "https://ah-eisa.com"
@@ -248,6 +249,7 @@ def generate_article_page(article, all_articles):
       <span class="article-reading-time">{article['reading_time']}</span>
     </div>
     <h1 class="article-title">{article['title']}</h1>
+    <p class="article-byline">By : {escape(article['author'])}</p>
     <p class="article-lead">{article['excerpt']}</p>
     {review_html}
   </div>
